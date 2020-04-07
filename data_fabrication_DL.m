@@ -1,0 +1,43 @@
+close all
+clear
+
+datanum = 1; %not used for now
+
+for s = 1:datanum
+%%
+[vad, Pv] = randP(200);
+vs = 0.05*vad;
+% vmax = 0.001; 
+% vs = vad(2*vmax;
+
+c0tot = 0.5;
+t = linspace(0,5000,10000);
+ci0 = c0tot * Pv;
+ci = @(ci0,vs,z,t)(ci0*(1-heaviside(z+vs*t)));
+C = [];
+z = 0:-0.1:-30;
+%%
+
+for k = 1:length(t)
+    
+    Ci = 0;
+    for i = 1:length(Pv)
+        Ci = ci(ci0(i),vs(i),z,t(k)) + Ci;
+    end
+%     plot(Ci,z)
+%     xlim([0 c0tot]);
+%     ylim([min(z) max(z)]);
+%     pause(0.1)
+    C = [C Ci'];
+    
+end
+
+
+fileID_Cdata= ['./TrainingData/Cdata_v' num2str(s) '.mat'];
+fileID_PVD= ['./TrainingData/PVD_v' num2str(s) '.mat'];
+dat = struct('C',C,'t',t,'z',z);
+save(fileID_Cdata,'dat')
+save(fileID_PVD,'vs','Pv')
+
+end
+

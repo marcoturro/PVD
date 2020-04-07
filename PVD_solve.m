@@ -1,15 +1,17 @@
 function [v, P, ERR] = PVD_solve(dat,Disp)
+%%
+clearvars -except dat Disp
 
-f_t = dat{1};
-f_z = dat{2};
-f_Ci = dat{3};
-f_P0 = dat{4};
-f_c0 = dat{5};
-f_z0 = dat{6};
-f_z1 = dat{7};
-f_z1id = dat{8};
-f_z0id = dat{9};
-f_C_t_z = dat{10};
+f_t = dat.t;
+f_z = dat.z;
+f_Ci = dat.Ci;
+f_P0 = dat.P0;
+f_c0 = dat.c0;
+f_z0 = dat.z0;
+f_z1 = dat.z1;
+f_z1id = dat.z1id;
+f_z0id = dat.z0id;
+f_C_t_z = dat.C_t_z;
 
  if ~exist('Disp','var')
      % third parameter does not exist, so default it to something
@@ -21,18 +23,28 @@ f_Ci(2:end) = sgolayfilt(f_Ci(2:end),order,frame);
 f_Ci(2:end)= wdenoise(f_Ci(2:end),4);
 
 for i = 1:length(f_Ci)
-    if  abs((f_Ci(i)-f_Ci(1)))/f_Ci(1)*100 >= f_Ci(1)*0.01
+    if  abs((f_Ci(i)-f_Ci(1)))/f_Ci(1)*100 >= 0.01
         tvmax = f_t(i);
-        dv = 10*f_z1*(1/f_t(i)-1/f_t(i-1));
+        dv = 15*f_z1*(1/f_t(i+1)-1/f_t(i));
         break
     end
     
 end
 
+for j = length(f_Ci):-1:i
+    if  abs((f_Ci(end)-f_Ci(j))) >= 0.01
+        tvmin = f_t(j);
+        break
+    end
+end
+ 
 vmax= f_z1/tvmax ;
-vmin = f_z1/f_t(end-1);
+vmin = f_z1/tvmin;
 vt = vmax:dv:vmin;
 ti = f_z1./vt;
+
+tint = zeros(1,length(ti));
+Id = tint;
 
 for i = 1:length(ti)  
     [~, idx] = min(abs(f_t-ti(i)));
@@ -41,14 +53,15 @@ for i = 1:length(ti)
 end
 
 dz = diff(f_z);
-Ci = [];
+Ci = zeros(1,length(tint));
 for i = 1:length(tint)
-    Ci     = [Ci sum(-f_C_t_z(f_z1id:f_z0id,Id(i))'.*dz(f_z1id:f_z0id))];
+    Ci(i) = sum(-f_C_t_z(f_z1id:f_z0id,Id(i))'.*dz(f_z1id:f_z0id));
 end
 
-Ci_i = interp1(f_t,f_Ci,ti);
+%Ci_i = interp1(f_t,f_Ci,ti);
 Ci_i = Ci;
 ti = tint;
+
 try
 order = 3; frame = 13;
 Ci_i = sgolayfilt(Ci_i,order,frame);
@@ -61,13 +74,7 @@ dddtCint = my_2FD_non_uniform(ti,Ci_i);
 dddtCint(dddtCint<0)=0;
 [v, P] = P_RHS_solve(f_z0,f_z1,ti,dddtCint,f_P0);
 
-plot(v,P,'LineWidth', 3)
-
-
-%% verification
-
-
-Nv = size(P);
+Nv = length(P);
 ci0 = f_c0 * P;
 ci = @(ci0,vs,z,t)(ci0*(1-heaviside(z+vs*t)));
 ERR = 0;
@@ -76,8 +83,11 @@ if Disp == 1
 figure('units','normalized','outerposition',[0 0 1 1])
 end
 
+div = 40;
+r = rem(length(f_t),div);
+stp = (length(f_t)-r)/div;
 
-for k = 1:30:length(f_t)
+for k = 1:stp:(length(f_t)-r)
     
     C = 0;
     for i = 1:Nv
@@ -113,13 +123,18 @@ for k = 1:30:length(f_t)
        %legend(['time remaining : ' sprintf('%.0f',f_t(end)-f_t(k)) ' [s]'])
        set(gca,'FontSize',18)
        sb4 = subplot(3,2,6);
-       scatter(f_t(k),err)
-       xlim([0 f_t(end)])
-       title('mean square difference for all particles')
-       %legend(['time remaining : ' sprintf('%.0f',f_t(end)-f_t(k)) ' [s]'])
-       hold(sb2,'on') ; hold(sb3,'on') ; hold(sb4,'on')
+       plot(v,P,'LineWidth', 3)
+       title('Particle Velocity Distribution')
        set(gca,'FontSize',18)
+%        scatter(f_t(k),err)
+%        xlim([0 f_t(end)])
+%        title('mean square difference for all particles')
+%        legend(['time remaining : ' sprintf('%.0f',f_t(end)-f_t(k)) ' [s]'])
+       hold(sb2,'on') ; hold(sb3,'on') ; hold(sb4,'on')
        pause (0.1)
+       end
+       if err <= 0.0001
+        break
        end
             
 end

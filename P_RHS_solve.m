@@ -30,6 +30,8 @@ rhs = (dddtCint./v.^3)';
 rhs(1) = 0 ; %Inital value &
 rhs(end) = 0 ; %Last value problem
 P = linsolve(A,rhs);
+%P = [0;P]
+%v = [2*v(1)-v(2) v]
 P(end+1) = P(end)/v(end);
 v(end+1) = 0;
 

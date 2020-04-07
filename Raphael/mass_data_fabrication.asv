@@ -1,0 +1,58 @@
+clear all;
+close all;
+
+
+Nt = 200;
+Np = 100;
+
+vmax = 1;
+vmin = 10^(-4);
+
+Nz = 400;
+
+z0 = 1;
+
+a2 = ;
+b2 = 2.0;
+
+a3 = 0.1;
+
+
+Nsamples = 1e7;
+a = 0.5;
+b = 4;
+omega = 1;
+
+Ndat = 100;
+
+for i = 1:Ndat
+    %z1 =(b3-a3)*rand+a3;
+    z = linspace(0,-1,Nz);
+
+% gamma = 10^((b2-a2).*rand+a2);
+%v_for_t = linspace(1,1/gamma,Nt);
+%t = 1./v_for_t;
+vmin = rand*a3;
+tend = 1/vmin;
+dt =(b2-a2)*rand + a2; 
+
+t= 0:dt:tend
+m = (b-a).*rand + a;
+
+[x] = randraw('nakagami', [m, omega], Nsamples);
+[P,wrk] = hist(x,Np);
+
+P = P/Nsamples;
+P = fliplr(P);
+wrk = wrk /max(wrk);
+figure(1)
+plot(wrk,P); hold on;
+
+ci = produce_data(P,t,z);
+figure(2)
+plot(t,ci);
+
+end
+
+
+%ci = produce_data(P,t,z);

@@ -1,4 +1,4 @@
-function [v, P, Pfit] = P_RHS_solve(z0,z1,ti,dddtCint,Pvmax,Pvmin)
+function [P] = P_RHS_solve(z0,z1,ti,dddtCint,Pvmax,Pvmin)
 %%
 v = z0./ti;
 a = z1/z0;
@@ -28,7 +28,10 @@ for i = 1:length(v)
     A(i,i) = 1;
     
 end
-A(1,2) = 0;
+A(1,:) = 0;
+A(1,1) = 1;
+A(end,:)=0;
+A(end,end)=1;
 
 rhs = (dddtCint./v.^3)';
 rhs(1) = Pvmax ; %vmax condition
@@ -40,25 +43,25 @@ P = linsolve(A,rhs);
 %v(end+1) = 0;
 
 
-P = flip(P');
-v = flip(v);
-dv = mean(diff(v));
+%P = flip(P');
+%v = flip(v');
+%dv = mean(diff(v));
 
-v(P<0) = [];
-P(P<0) = [];
+% v(P<0) = [];
+% P(P<0) = [];
 
-Pi = interp1([0 v(1)],[0 P(1)],0:dv:v(1));
-P = [Pi P(2:end)];
-vi = interp1([0 v(1)],[0 v(1)],0:dv:v(1));
-v = [vi v(2:end)];
+% Pi = interp1([0 v(1)],[0 P(1)],0:dv:v(1));
+% P = [Pi P(2:end)];
+% vi = interp1([0 v(1)],[0 v(1)],0:dv:v(1));
+% v = [vi v(2:end)];
 
 %%
-rpgP = fitrgp(v',P','Basis','linear',...
-      'FitMethod','exact','PredictMethod','exact'); %,'KernelFunction','exponential'); for rougher datasets?
+%rpgP = fitrgp(v',P','Basis','linear',...
+ %     'FitMethod','exact','PredictMethod','exact'); %,'KernelFunction','exponential'); for rougher datasets?
 
-Pfit = resubPredict(rpgP);
-
-Pfit = Pfit./sum(Pfit);
-P = P./sum(P);
+%Pfit = resubPredict(rpgP);
+%Pfit = P;
+%Pfit = Pfit./sum(Pfit);
+%P = P./sum(P);
 
 end

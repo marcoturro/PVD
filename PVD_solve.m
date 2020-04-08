@@ -115,7 +115,6 @@ for k = 1:stp:(length(f_t)-r)
        legend('reconstructed data','input data','Measure points')
        set(gca,'FontSize',18)
        
-       if k ==1
        sb2 = subplot(3,2,2);
        scatter(f_t(k),err)
        xlim([0 f_t(end)])
@@ -123,6 +122,8 @@ for k = 1:stp:(length(f_t)-r)
        legend(['time : ' sprintf('%.0f',f_t(k)*100) ' [%]'])
        set(gca,'FontSize',18)
 
+       if k ==1
+           
        sb3 = subplot(3,2,4);
        plot(f_t,f_Ci,'--')
        hold on
@@ -139,7 +140,8 @@ for k = 1:stp:(length(f_t)-r)
        title('Particle Velocity Distribution')
        ylim([0 1])
        set(gca,'FontSize',18)
-       
+       legend('scatter','P fitted')
+
        end
        pause (0.1)
        end

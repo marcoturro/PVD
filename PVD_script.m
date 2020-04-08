@@ -1,7 +1,7 @@
 clear
 %close all
 tic
-data_fabrication_DL
+%data_fabrication_DL
 
 Disp = 1
 ratio = 47
@@ -73,6 +73,7 @@ dat  = struct('t',t,'z',z,'Ci',Ci,'c0',c0,'z0',z0,'z1'...
 if realP
     subplot(3,2,6);
     plot(vr,Pr./max(Pr),'LineWidth',2,'LineStyle','--');
+    legend('scatter','P fitted','P original')
 end
 
 toc

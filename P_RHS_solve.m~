@@ -7,7 +7,7 @@ A = zeros(length(ti));
 
 rpgddt = fitrgp(ti',dddtCint','Basis','linear',...
       'FitMethod','exact','PredictMethod','exact'); %,'KernelFunction','exponential'); for rougher datasets?
-%dddtCint = resubPredict(rpgddt)';
+dddtCint = resubPredict(rpgddt);
 
 for i = 1:length(v)
     
@@ -31,8 +31,8 @@ end
 A(1,2) = 0;
 
 rhs = (dddtCint./v.^3)';
-rhs(1) = Pvmax ; %vmax condition
-rhs(end) = Pvmin ; %vmin condition
+rhs(1) = 0.01 ; %Inital value &
+rhs(end) = 0 ; %Last value problem
 P = linsolve(A,rhs);
 
 %interp1([0 1],[0 vs(1)],0:dv:vs(1))
@@ -44,21 +44,17 @@ P = flip(P');
 v = flip(v);
 dv = mean(diff(v));
 
-v(P<0) = [];
-P(P<0) = [];
-
 Pi = interp1([0 v(1)],[0 P(1)],0:dv:v(1));
 P = [Pi P(2:end)];
 vi = interp1([0 v(1)],[0 v(1)],0:dv:v(1));
 v = [vi v(2:end)];
 
-%%
+v(P<0) = [];
+P(P<0) = [];
+
 rpgP = fitrgp(v',P','Basis','linear',...
       'FitMethod','exact','PredictMethod','exact'); %,'KernelFunction','exponential'); for rougher datasets?
-
 Pfit = resubPredict(rpgP);
 
-Pfit = Pfit./sum(Pfit);
-P = P./sum(P);
 
 end

@@ -1,12 +1,12 @@
 clear
 %close all
-tic
+
 data_fabrication_DL
 
 Disp = 1
 ratio = 47
 offset = -45 % (positive is upwards ie. opposite of gravity accel)
-
+tic
 
 in='./TrainingData/Cdata_v10.mat';
 data = load(in);
@@ -71,7 +71,6 @@ dat  = struct('t',t,'z',z,'Ci',Ci,'c0',c0,'z0',z0,'z1'...
 [vs, P, Pfit, ERR] = PVD_solve(dat,Disp);
 
 if realP
-    subplot(3,2,6);
     plot(vr,Pr./max(Pr),'LineWidth',2,'LineStyle','--');
 end
 

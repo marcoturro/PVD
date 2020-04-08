@@ -1,4 +1,4 @@
-function [v, P] = P_RHS_solve(z0,z1,ti,dddtCint,P0)
+function [v, P, Pfit] = P_RHS_solve(z0,z1,ti,dddtCint,Pvmax,Pvmin)
 %%
 v = z0./ti;
 a = z1/z0;
@@ -30,11 +30,26 @@ rhs = (dddtCint./v.^3)';
 rhs(1) = 0 ; %Inital value &
 rhs(end) = 0 ; %Last value problem
 P = linsolve(A,rhs);
-%P = [0;P]
-%v = [2*v(1)-v(2) v]
-P(end+1) = P(end)/v(end);
-v(end+1) = 0;
 
-P = P/sum(P);
+%interp1([0 1],[0 vs(1)],0:dv:vs(1))
+%P(end+1) = P(end)/v(end);
+%v(end+1) = 0;
+
+
+P = flip(P');
+v = flip(v);
+dv = mean(diff(v));
+
+Pi = interp1([0 v(1)],[0 P(1)],0:dv:v(1));
+P = [Pi P(2:end)];
+vi = interp1([0 v(1)],[0 v(1)],0:dv:v(1));
+v = [vi v(2:end)];
+
+gprMdl = fitrgp(v',P','Basis','linear',...
+      'FitMethod','exact','PredictMethod','exact'); %,'KernelFunction','exponential'); for rougher datasets?
+Pfit = resubPredict(gprMdl);
+Pfit(Pfit<0)=0;
+
+Pfit = Pfit/sum(Pfit);
 
 end

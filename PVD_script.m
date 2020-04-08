@@ -2,47 +2,73 @@ clear
 %close all
 
 Disp = 1
-ratio = 40
-offset = -35 % (positive is upwards ie. opposite of gravity accel)
+ratio = 45
+offset = -40 % (positive is upwards ie. opposite of gravity accel)
 tic
 
-in='./TrainingData/Cdata_v10.mat';
+in='./Raphael/created_data/data_set_16.mat';
 data = load(in);
 
 try 
     t = data.dat.t;
     z = data.dat.z; % attention untis of z
     C_t_z = data.dat.C;
-%     maxz = max(abs(z));
-%     z = z./maxz;
-%     maxt = max(t);
-%     t = t./max(t);
+    [m, ~] = size(C_t_z);
+    if m ~= length(z)
+        C_t_z = C_t_z';
+    end
+    maxz = max(abs(z));
+    z = z./maxz;
+    maxt = max(t);
+    t = t./max(t);
+    if isfield(data.dat,'P')
+        Pr = data.dat.P;
+        vr = data.dat.v;
+        realP = 1;
+    else
+        realP = 0;
+    end
 catch
+    
 end
 
-z1 = -floor(z(ceil(length(z)*(ratio-offset)/100)));
-z0 = -ceil(z(end - ceil(length(z)*(ratio+offset)/100)));
+z1 = -(z(floor(length(z)*(ratio-offset)/100)));
+z0 = -(z(end - floor(length(z)*(ratio+offset)/100)));
+
+if maxz ~= 1
+z1dim = ceil(z1 * maxz);
+z0dim = floor(z0 * maxz);
+sprintf('proposed z1 = %.02f cm\nproposed z0 = %.02f cm',z1dim,z0dim)
+else
+z1dim = z1;
+z0dim = z0;
+sprintf('proposed z1 = %.03f [-]\nproposed z0 = %.03f [-]',z1dim,z0dim)
+end
+
 c0 = mean(C_t_z(:,1));
 cN = mean(C_t_z(:,end));
-P0 = cN/c0;
 dz = diff(z);
-
-sprintf('proposed z0 = %d cm\nproposed z1 = %d cm',z0,z1)
 
 [~, z1id] = min( abs( z + z1) );
 [~, z0id] = min( abs( z + z0) );
 
-Ci = []; Ciwvl = [];
+Ci = zeros(1,length(t)) ; Ciwvl = Ci;
 for i = 1:length(t)
-    wvlC=wden(C_t_z(:,i),'modwtsqtwolog','s','mln',4,'sym4');
+    %wvlC=wden(C_t_z(:,i),'modwtsqtwolog','s','mln',4,'sym4');
      
-    Ci     = [Ci     sum(-C_t_z(z1id:z0id,i)'.*dz(z1id:z0id))];
-    Ciwvl  = [Ciwvl  sum(-wvlC(z1id:z0id).*dz(z1id:z0id))];
+    Ci(i)     = sum(-C_t_z(z1id:z0id,i)'.*dz(z1id:z0id));
+    %Ciwvl(i)  = sum(-wvlC(z1id:z0id).*dz(z1id:z0id));
 end
 
-dat  = struct('t',t,'z',z,'Ci',Ci,'P0',P0,'c0',c0,'z0',z0,'z1'... 
+Ci = Ci./max(Ci); %Ciwvl = Ciwvl./max(Ciwvl);
+
+dat  = struct('t',t,'z',z,'Ci',Ci,'c0',c0,'z0',z0,'z1'... 
                 ,z1,'z1id',z1id,'z0id',z0id,'C_t_z',C_t_z); % Chose Ci or Ciwvl
 
-[vs, P, ERR] = PVD_solve(dat,Disp);
+[vs, P, Pfit, ERR] = PVD_solve(dat,Disp);
+
+if realP
+    plot(vr,Pr./max(Pr),'LineWidth',2,'LineStyle','--');
+end
 
 toc

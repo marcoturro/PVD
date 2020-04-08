@@ -1,11 +1,10 @@
-function [v, P, ERR] = PVD_solve(dat,Disp)
+function [v, P, Pfit, ERR] = PVD_solve(dat,Disp)
 %%
 clearvars -except dat Disp
 
 f_t = dat.t;
 f_z = dat.z;
 f_Ci = dat.Ci;
-f_P0 = dat.P0;
 f_c0 = dat.c0;
 f_z0 = dat.z0;
 f_z1 = dat.z1;
@@ -18,14 +17,15 @@ f_C_t_z = dat.C_t_z;
       Disp = 0;
  end
 
-order = 3; frame = 13;
-f_Ci(2:end) = sgolayfilt(f_Ci(2:end),order,frame);
-f_Ci(2:end)= wdenoise(f_Ci(2:end),4);
+% order = 3; frame = 13;
+% f_Ci(2:end) = sgolayfilt(f_Ci(2:end),order,frame);
+% f_Ci(2:end)= wdenoise(f_Ci(2:end),4);
 
 for i = 1:length(f_Ci)
     if  abs((f_Ci(i)-f_Ci(1)))/f_Ci(1)*100 >= 0.01
         tvmax = f_t(i);
-        dv = 15*f_z1*(1/f_t(i+1)-1/f_t(i));
+        dv = 50 * f_z1*(1/f_t(i+1)-1/f_t(i));
+        Pvmax = 1;
         break
     end
     
@@ -34,6 +34,7 @@ end
 for j = length(f_Ci):-1:i
     if  abs((f_Ci(end)-f_Ci(j))) >= 0.01
         tvmin = f_t(j);
+        Pvmin = abs((f_Ci(end)-f_Ci(j)));
         break
     end
 end
@@ -60,25 +61,27 @@ end
 
 %Ci_i = interp1(f_t,f_Ci,ti);
 Ci_i = Ci;
-ti = tint;
+%ti = movmean(tint,3);
 
-try
-order = 3; frame = 13;
-Ci_i = sgolayfilt(Ci_i,order,frame);
-catch
-order = 3; frame = 2*floor(length(ti))/2-1;
-Ci_i = sgolayfilt(Ci_i,order,frame);
-end
+% try
+% order = 3; frame = 13;
+% Ci_i = sgolayfilt(Ci_i,order,frame);
+% catch
+% order = 3; frame = 2*floor(length(ti))/2-1;
+% Ci_i = sgolayfilt(Ci_i,order,frame);
+% end
 
 dddtCint = my_2FD_non_uniform(ti,Ci_i);
-dddtCint(dddtCint<0)=0;
-[v, P] = P_RHS_solve(f_z0,f_z1,ti,dddtCint,f_P0);
+%dddtCint = movmean(dddtCint,3);
+[v, Pest, Pfit] = P_RHS_solve(f_z0,f_z1,ti,dddtCint,Pvmax,Pvmin);
+P = Pfit;
 
 Nv = length(P);
 ci0 = f_c0 * P;
 ci = @(ci0,vs,z,t)(ci0*(1-heaviside(z+vs*t)));
 ERR = 0;
 
+%%
 if Disp == 1
 figure('units','normalized','outerposition',[0 0 1 1])
 end
@@ -114,7 +117,7 @@ for k = 1:stp:(length(f_t)-r)
        scatter(f_t(k),smallErr)
        xlim([0 f_t(end)])
        title('mean square difference for small particles')
-       legend(['time remaining : ' sprintf('%.0f',f_t(end)-f_t(k)) ' [s]'])
+       legend(['time : ' sprintf('%.0f',f_t(k)*100) ' [%]'])
        set(gca,'FontSize',18)
        sb3 = subplot(3,2,4);
        scatter(f_t(k),bigErr)
@@ -122,18 +125,21 @@ for k = 1:stp:(length(f_t)-r)
        title('mean square difference for large particles')
        %legend(['time remaining : ' sprintf('%.0f',f_t(end)-f_t(k)) ' [s]'])
        set(gca,'FontSize',18)
+       hold(sb2,'on') ; hold(sb3,'on') ;
        sb4 = subplot(3,2,6);
-       plot(v,P,'LineWidth', 3)
+       scatter(v./max(v),Pest)
+       hold on
+       plot(v./max(v),Pfit./max(Pfit),'LineWidth', 2)
        title('Particle Velocity Distribution')
+       ylim([0 1])
        set(gca,'FontSize',18)
 %        scatter(f_t(k),err)
 %        xlim([0 f_t(end)])
 %        title('mean square difference for all particles')
 %        legend(['time remaining : ' sprintf('%.0f',f_t(end)-f_t(k)) ' [s]'])
-       hold(sb2,'on') ; hold(sb3,'on') ; hold(sb4,'on')
        pause (0.1)
        end
-       if err <= 0.0001
+       if err <= 0.001
         break
        end
             

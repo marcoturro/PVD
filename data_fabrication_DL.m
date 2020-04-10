@@ -2,9 +2,8 @@
 %clear
 
 %make into a loop for higher number of datasets
-
-s = 10;
-
+nbOfSets = 1;
+for s = 1:nbOfSets
 %%
 [vad, Pv] = randP(randi([90 140],1)); %to test
 vs = 0.1*vad; %just for realism
@@ -16,7 +15,7 @@ t = linspace(0,randi([1000 1400],1),randi([8000 14000],1)); %to be twitched
 ci0 = c0tot * Pv;
 ci = @(ci0,vs,z,t)(ci0*(1-heaviside(z+vs*t)));
 C = [];
-z = 0:-0.1:-30;
+z = 0:-0.01*randi([5 10],1):-10*randi([3 5],1);
 %%
 C = zeros(length(z),length(t));
 for k = 1:length(t)
@@ -38,3 +37,4 @@ fileID_Cdata= ['./TrainingData/Cdata_v' num2str(s) '.mat'];
 dat = struct('C',C,'t',t,'z',z,'P',Pv,'v',vs);
 save(fileID_Cdata,'dat')
 
+end

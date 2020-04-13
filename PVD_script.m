@@ -68,5 +68,4 @@ if realP
     legend('scatter','Fit','P original')
 end
 
-
 toc

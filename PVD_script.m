@@ -6,9 +6,9 @@ tic
 col = lines(100);
 ci = @(ci0,vs,z,t)(ci0*(1-heaviside(z+vs*t)));
 
-%for itst = 1:42
-%in=['./Raphael/created_data/data_set_' num2str(itst) '.mat'];%./TrainingData/Cdata_v10.mat';
-in = ['./TrainingData/Cdata_v10.mat'];
+for itst = 1:42
+in=['./Raphael/created_data/data_set_' num2str(itst) '.mat'];%./TrainingData/Cdata_v10.mat';
+%in = ['./TrainingData/Cdata_v10.mat'];
 data = load(in);
 
 try 
@@ -90,8 +90,11 @@ end
  end
 ERR(itst) = max(err);
 
-%end
+end
 
 figure
 plot(ERR,'o');
+ylabel('$\epsilon$');
+xlabel('id');
+
 toc

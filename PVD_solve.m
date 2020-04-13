@@ -104,7 +104,7 @@ for k = 1:stp:length(t)-r
        scatter(t(k),err)
        xlim([0 t(end)])
        title('mean square difference for all particles')
-       legend(['time : ' sprintf('%.0f',t(k)*100) ' [%]'])
+       legend(['time : ' sprintf('%.0f',t(k)/t(end)*100) ' [%]'])
        set(gca,'FontSize',18)
        hold on
 
@@ -124,6 +124,7 @@ for k = 1:stp:length(t)-r
        hold on
        plot(v,Pfit./max(Pfit),'LineWidth', 2)
        title('Particle Velocity Distribution')
+       set(gca, 'XLim', [0, get(gca, 'XLim') * [0; 1]])
        ylim([0 1])
        set(gca,'FontSize',18)
        legend('scatter','P fitted')

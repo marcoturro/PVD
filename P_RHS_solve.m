@@ -1,4 +1,4 @@
-function [Pest, Pfit] = P_RHS_solve(z0,z1,ti,dddtCint,Pvmax,Pvmin)
+function [v, Pest, Pfit] = P_RHS_solve(z0,z1,ti,dddtCint,Pvmax,Pvmin)
 %%
 v = z0./ti;
 a = z1/z0;
@@ -11,7 +11,7 @@ rpgddt = fitrgp(ti',dddtCint','Basis','linear',...
 
 for i = 1:length(v)
     
-    idx = find(v<v_star(i), 1 ); %this creates issues
+    idx = find(v<v_star(i), 1 );
     coef1 = abs(v_star(i) - v(idx));
     coef2 = abs(v_star(i) - v(idx-1));
     dv = abs(v(idx)- v(idx-1));
@@ -34,8 +34,8 @@ A(end,:)=0;
 A(end,end)=1;
 
 rhs = (dddtCint./v.^3)';
-rhs(1) = Pvmax ; %vmax condition
-rhs(end) = Pvmin ; %vmin condition
+%rhs(1) = Pvmax ; %vmax condition
+%rhs(end) = Pvmin ; %vmin condition
 P = linsolve(A,rhs);
 
 
@@ -43,8 +43,8 @@ P = linsolve(A,rhs);
 % v = flip(v);
 % dv = mean(diff(v));
 % 
-% v(P<0) = [];
-% P(P<0) = [];
+v(P<0) = [];
+P(P<0) = [];
 % 
 % Pi = interp1([0 v(1)],[0 P(1)],0:dv:v(1));
 % P = [Pi P(2:end)];

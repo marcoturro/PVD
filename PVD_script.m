@@ -5,7 +5,7 @@ tic
 
 Disp = 1;
 
-in = ['./TrainingData/Cdata_v2.mat'];
+in = './TrainingData/Cdata_v1.mat';
 data = load(in);
 
 try 
@@ -16,10 +16,6 @@ try
     if m ~= length(z)
         C_t_z = C_t_z';
     end
-    %maxz = max(abs(z));
-    %z = z./maxz;
-    %maxt = max(t);
-    %t = t./max(t);
     if isfield(data.dat,'P')
         Pr = data.dat.P;
         vr = data.dat.v;
@@ -32,8 +28,8 @@ catch
     
 end
 
-z1 = 0.9; %-(z(floor(length(z)*(ratio-offset)/100)));
-z0 = 0.95;%-(z(end - floor(length(z)*(ratio+offset)/100)));
+z1 = 0.95; 
+z0 = 1;
 
 z1dim = z1 * max(abs(z));
 z0dim = z0 * max(abs(z));
@@ -47,12 +43,12 @@ C_v = C_t_z./c0.*(1-C_t_z./c0);
 [~, z1id] = min( abs( z + z1dim) );
 [~, z0id] = min( abs( z + z0dim) );
 
-Ci = zeros(1,length(t)) ; Ciwvl = Ci;
+Ci = zeros(1,length(t)) ; %Ciwvl = Ci;
 for i = 1:length(t)
     %wvlC=wden(C_t_z(:,i),'modwtsqtwolog','s','mln',4,'sym4');
      
     Ci(i)     = trapz(z(z1id:z0id),-C_t_z(z1id:z0id,i));
-    %Ciwvl(i)  = sum(-wvlC(z1id:z0id).*dz(z1id:z0id));
+    %Ciwvl(i)  = trapz(z(z1id:z0id),-wvlC(z1id:z0id));
 end
 
 Ci = Ci./max(Ci); %Ciwvl = Ciwvl./max(Ciwvl);

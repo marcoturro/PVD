@@ -12,6 +12,7 @@ C_t_z = dat.C_t_z;
 C_v = dat.C_v;
 Disp = dat.Disp;
 
+
  if ~exist('Disp','var')
      % third parameter does not exist, so default it to something
       Disp = 0;
@@ -24,7 +25,7 @@ Disp = dat.Disp;
 for i = 1:length(Ci)
     if  1-abs(Ci(i)/Ci(1)) >= 0.01 %is this the best way to do it?
         tvmax = t(i-1);
-        dv = 30 * z1*(1/t(i+1)-1/t(i));
+        dv = 20 * z1*(1/t(i+1)-1/t(i));
         Pvmax = 1-abs(Ci(i-1)/Ci(1));
         break
     end
@@ -39,7 +40,7 @@ for j = length(Ci):-1:i
     end
 end
  
-vmax= z0/tvmax ;
+vmax= z1/tvmax ;
 vmin = z0/tvmin;
 v = vmax:dv:vmin;
 ti = z0./v;
@@ -49,7 +50,7 @@ Ci_i = interp1(t,Ci,ti);
 dddtCint = my_2FD_non_uniform(ti,Ci_i);
 %dddtCint = movmean(dddtCint,3);
 
-[Pest, Pfit] = P_RHS_solve(z0,z1,ti,dddtCint,Pvmax,Pvmin);
+[v, Pest, Pfit] = P_RHS_solve(z0,z1,ti,dddtCint,Pvmax,Pvmin);
 P = Pest;
 
 Nv = length(P);
@@ -62,7 +63,7 @@ if Disp == 1
 figure('units','normalized','outerposition',[0 0 1 1])
 end
 
-stp = fix(length(t)/50);
+stp = fix(length(t)/20);
 r = rem(length(t),stp);
 
 for k = 1:stp:length(t)-r
@@ -99,6 +100,7 @@ for k = 1:stp:length(t)-r
        ylim([min(z),max(z)])
        legend('v(C)')
        set(gca,'FontSize',18)
+       hold on
        
        sb3 = subplot(3,3,3);
        scatter(t(k),err)
@@ -113,7 +115,7 @@ for k = 1:stp:length(t)-r
        sb4 = subplot(3,3,6);
        plot(t,Ci,'--')
        hold on
-       plot(ti,Ci_i./max(Ci_i),'LineWidth',2)
+       plot(ti,Ci_i,'LineWidth',2)
        xlim([0 t(end)])
        title('Integration Ci')
        legend('Original','Retained')

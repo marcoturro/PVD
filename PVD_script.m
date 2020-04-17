@@ -5,7 +5,7 @@ tic
 
 Disp = 1;
 
-in = './TrainingData/Cdata_v1.mat';
+in = './TrainingData/Cdata_v10.mat';
 data = load(in);
 
 try 
@@ -59,7 +59,7 @@ dat  = struct('t',t,'z',z,'Ci',Ci,'c0',c0,'z0',z0dim,'z1'...
 [vs, P] = PVD_solve(dat);
 
 if realP
-    subplot(3,3,9)
+    subplot(3,2,[4 6])
     plot(vr,Pr./max(Pr),'LineWidth',2,'LineStyle','--');
     legend('scatter','Fit','P original')
 end

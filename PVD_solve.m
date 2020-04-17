@@ -25,7 +25,7 @@ Disp = dat.Disp;
 for i = 1:length(Ci)
     if  1-abs(Ci(i)/Ci(1)) >= 0.01 %is this the best way to do it?
         tvmax = t(i-1);
-        dv = 20 * z1*(1/t(i+1)-1/t(i));
+        dv = 40  * z1*(1/t(i+1)-1/t(i));
         Pvmax = 1-abs(Ci(i-1)/Ci(1));
         break
     end
@@ -82,7 +82,7 @@ for k = 1:stp:length(t)-r
        %smallErr = sum((C(1:boundD)-movmean(f_C_t_z(1:boundD,k),length(f_z(1:boundD))*0.05)').^2);
        %bigErr = sum((C(boundU:end)-movmean(f_C_t_z(boundU:end,k),length(f_z(boundU:end))*0.05)').^2);
        
-       sb1 = subplot(3,3,[1 4 7]) ;
+       sb1 = subplot(3,2,[1 3 5]) ;
        
        plot(C,z,'--')
        hold on
@@ -93,16 +93,16 @@ for k = 1:stp:length(t)-r
        legend('reconstructed data','input data','Measure points')
        set(gca,'FontSize',18)
        
-       sb2 = subplot(3,3,[2 5 8]) ;
+%        sb2 = subplot(3,3,[2 5 8]) ;
+%        
+%        plot(C_v(:,k)/max(C_v(:,k))*vmax,z,'--')
+%        title('Ks')
+%        ylim([min(z),max(z)])
+%        legend('v(C)')
+%        set(gca,'FontSize',18)
+%        hold on
        
-       plot(C_v(:,k)/max(C_v(:,k))*vmax,z,'--')
-       title('Ks')
-       ylim([min(z),max(z)])
-       legend('v(C)')
-       set(gca,'FontSize',18)
-       hold on
-       
-       sb3 = subplot(3,3,3);
+       sb3 = subplot(3,2,2);
        scatter(t(k),err)
        xlim([0 t(end)])
        title('mean square difference for all particles')
@@ -112,24 +112,24 @@ for k = 1:stp:length(t)-r
 
        if k ==1
            
-       sb4 = subplot(3,3,6);
-       plot(t,Ci,'--')
-       hold on
-       plot(ti,Ci_i,'LineWidth',2)
-       xlim([0 t(end)])
-       title('Integration Ci')
-       legend('Original','Retained')
-       set(gca,'FontSize',18)
+%        sb4 = subplot(3,2,4);
+%        plot(t,Ci,'--')
+%        hold on
+%        plot(ti,Ci_i,'LineWidth',2)
+%        xlim([0 t(end)])
+%        title('Integration Ci')
+%        legend('Original','Retained')
+%        set(gca,'FontSize',18)
        
-       sb5 = subplot(3,3,9);
+       sb5 = subplot(3,2,[4 6]);
        scatter(v,Pest./max(Pest))
        hold on
        plot(v,Pfit./max(Pfit),'LineWidth', 2)
        title('Particle Velocity Distribution')
        set(gca, 'XLim', [0, get(gca, 'XLim') * [0; 1]])
        ylim([0 1])
+       legend('scatter','P fitted');
        set(gca,'FontSize',18)
-       legend('scatter','P fitted')
 
        end
        

@@ -52,7 +52,7 @@ P(P<0) = [];
 % v = [vi v(2:end)];
 
 %%
-rpgP = fitrgp(v',P,'Basis','linear',...
+rpgP = fitrgp(linspace(v(1),1,length(v))',P,'Basis','linear',...
      'FitMethod','exact','PredictMethod','exact'); %,'KernelFunction','exponential'); for rougher datasets?
 
 Pfit = resubPredict(rpgP);

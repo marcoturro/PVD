@@ -5,7 +5,8 @@ tic
 
 Disp = 1;
 
-in = './TrainingData/Cdata_v10.mat';
+in = './TrainingData/data_set_1.mat';
+%in = './Raphael/created_data/data_set_12.mat';
 data = load(in);
 
 try 
@@ -33,7 +34,7 @@ z0 = 1;
 
 z1dim = z1 * max(abs(z));
 z0dim = z0 * max(abs(z));
-sprintf('proposed z1 = %3.3f m\nproposed z0 = %3.3f m',z1dim,z0dim)
+sprintf(' z1 = %3.3f m\ z0 = %3.3f m',z1dim,z0dim)
 
 c0 = mean(C_t_z(:,1));
 cN = mean(C_t_z(:,end));
@@ -56,7 +57,7 @@ Ci = Ci./max(Ci); %Ciwvl = Ciwvl./max(Ciwvl);
 dat  = struct('t',t,'z',z,'Ci',Ci,'c0',c0,'z0',z0dim,'z1'... 
                 ,z1dim,'Disp',Disp,'C_t_z',C_t_z,'C_v',C_v); % Chose Ci or Ciwvl
 
-[vs, P] = PVD_solve(dat);
+[vs, vmax,P] = PVD_solve(dat);
 
 if realP
     subplot(3,2,[4 6])

@@ -1,4 +1,4 @@
-function [v, P] = PVD_solve(dat)
+function [v, vmax, P] = PVD_solve(dat)
 %%
 clearvars -except dat Disp
 
@@ -90,6 +90,7 @@ for k = 1:stp:length(t)-r
        xlim([0 c0*1.1]); ylim([min(z),max(z)])
        plot(movmean(C_t_z(:,k),length(z)*0.05)',z)
        scatter([C_t_z(boundD,k) C_t_z(boundU,k)],[z(boundD) z(boundU)])
+       xlabel('C [g/L]'); ylabel('z [cm]')
        legend('reconstructed data','input data','Measure points')
        set(gca,'FontSize',18)
        
@@ -106,7 +107,8 @@ for k = 1:stp:length(t)-r
        scatter(t(k),err)
        xlim([0 t(end)])
        title('mean square difference for all particles')
-       legend(['time : ' sprintf('%.0f',t(k)/t(end)*100) ' [%]'])
+       legend(['time : ' sprintf('%.0f [s] (%.0f',t(k), t(k)/t(end)*100) '%)'])
+       xlabel('t [s]'); ylabel('[%]')
        set(gca,'FontSize',18)
        hold on
 
@@ -127,7 +129,7 @@ for k = 1:stp:length(t)-r
        plot(v,Pfit./max(Pfit),'LineWidth', 2)
        title('Particle Velocity Distribution')
        set(gca, 'XLim', [0, get(gca, 'XLim') * [0; 1]])
-       ylim([0 1])
+       ylim([0 1]) ; xlabel('v [m/s]'); ylabel('P(v)')
        legend('scatter','P fitted');
        set(gca,'FontSize',18)
 

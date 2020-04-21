@@ -1,11 +1,10 @@
-clear all;
-close all;
-addpath 'E:\Raphael\MIT\sediment_model\GIT\PVD\Raphael'
+function mass_data_fabrication_ML_random_gauss(cnt_max)
+addpath './Raphael'
 
-if ~exist('E:\Raphael\MIT\sediment_model\ML_TRAINING_DATA','dir');
-mkdir 'E:\Raphael\MIT\sediment_model\ML_TRAINING_DATA';
+if ~exist('../ML_TRAINING_DATA','dir')
+mkdir '../ML_TRAINING_DATA';
 else
-    nnn = dir('E:\Raphael\MIT\sediment_model\ML_TRAINING_DATA\*.mat');
+    nnn = dir('../ML_TRAINING_DATA/*.mat');
     nnn = numel(nnn);
 end
 
@@ -34,7 +33,6 @@ bpol = 5;
 Ndat = 100;
 
 z = linspace(0,-1,Nz);
-cnt_max = 10000;
 cnt = 0;
 
 while cnt < cnt_max
@@ -73,6 +71,8 @@ P = P/sum(P);
  
  save(['E:\Raphael\MIT\sediment_model\ML_TRAINING_DATA\data_set_' num2str(nnn+cnt) '.mat'],'dat');
 
+
+end
 
 end
 

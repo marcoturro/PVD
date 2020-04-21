@@ -1,16 +1,11 @@
-function Cmat = produce_data(P,t,z)
+function Cmat = produce_data(P,vs,t,z)
 
 
 Nv = length(P);
-vs = linspace(0,1,Nv);
-ci = @(ci0,vs,z,t)(ci0*(1-heaviside(z+vs*t)));
-
+ci = @(ci0,vs,z,t)(ci0'.*(1-heaviside(z+vs'*t)));
+Cmat = zeros(length(t),length(z));
 for k = 1:length(t)
-    
-    C = 0;
-    for i = 1:Nv
-        C = ci(P(i),vs(i),z,t(k)) + C;
-    end
-    Cmat(k,:) =C;
+    Cmat(k,:) = sum(ci(P,vs,z,t(k)));
 end
+
 end

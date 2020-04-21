@@ -36,7 +36,10 @@ Ndat = 100;
 z = linspace(0,-1,Nz);
 cnt_max = 10000;
 cnt = 0;
+
 while cnt < cnt_max
+    toc
+    tic
     cnt = cnt+1
 vmin = (b3-a3)*rand+a3;
 tend = 1/vmin;
@@ -51,24 +54,24 @@ xx = [vmin rand(1,Npol) 1];
 yy = [0 rand(1,Npol) 0];
 p = polyfit(xx,yy,Npol+1);
 
-
-P = polyval(p,v).^2.*(1-0.2*rand(1,Np));
+rand1 = (1-vmin)*rand + vmin;
+rand2 = 0.5*(1-vmin)*rand +vmin/2;
+P = normpdf(v,rand1,rand2) .*(polyval(p,v).^2.*(1-0.2*rand(1,Np)));
 P = P/sum(P);
 
 % fprintf('vmin is %3.3f\n',vmin);
 % fprintf('dt is %0.7f\n',dt);
-% fprintf('tmax is %3.3f\n',tend);
 
 
-Cmat = produce_data(P,v,t,z);
-
-dat.C = Cmat;
-dat.z = z;
-dat.t = t;
-dat.P = P;
-dat.v = v;
-
-save(['E:\Raphael\MIT\sediment_model\ML_TRAINING_DATA\data_set_' num2str(nnn+cnt) '.mat'],'dat');
+ Cmat = produce_data(P,v,t,z);
+ 
+ dat.C = Cmat;
+ dat.z = z;
+ dat.t = t;
+ dat.P = P;
+ dat.v = v;
+ 
+ save(['E:\Raphael\MIT\sediment_model\ML_TRAINING_DATA\data_set_' num2str(nnn+cnt) '.mat'],'dat');
 
 
 end

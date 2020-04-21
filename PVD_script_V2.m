@@ -2,16 +2,17 @@ clear
 %close all
 
 D=4
-per = 30
+per = 45
+offset = 40
 tic
 
 %in = ['./Cdata/Cdata_v' num2str(D) '.mat']; %input('data file name? \nEx. Cdata.mat \n','s');
- in='./Cdata/Cdata_v1.mat'
+ in='./TrainingData/Cdata_v10.mat'
 data = load(in);
 
 try 
     t = data.dat.t;
-    z = data.dat.z*100;
+    z = data.dat.z;
     C_t_z = data.dat.C;
 catch
 end
@@ -21,8 +22,8 @@ end
 figure; subplot(2,2,1); plot(t); title('data time [s]'); subplot(2,2,3); dt = mean(diff(t)); plot(diff(t)); subplot(2,2,2); plot(z); title('space [cm]'); subplot(2,2,4); dz = diff(z); plot(diff(z))
 
 ratio = per; % percentage
-z1 = -floor(z(ceil(length(z)*ratio/100)));
-z0 = -ceil(z(end - ceil(length(z)*ratio/100)));
+z1 = -floor(z(ceil(length(z)*(ratio+offset)/100)));
+z0 = -ceil(z(end - ceil(length(z)*(ratio-offset)/100)));
 c0 = mean(C_t_z(:,1));
 cN = mean(C_t_z(:,end));
 P0 = cN/c0;
@@ -36,23 +37,20 @@ Ciwvl= []; Cimavg = []; Ci = [];
 
 for i = 1:length(t)
     
-    wvlC=wden(C_t_z(:,i),'modwtsqtwolog','s','mln',4,'sym4');
-    mavgC=movmean(C_t_z(:,i),length(z)*0.05)';
-    
-    t(i);
-    clc
+    %wvlC=wden(C_t_z(:,i),'modwtsqtwolog','s','mln',4,'sym4');
+    %mavgC=movmean(C_t_z(:,i),length(z)*0.05)';
     
     Ci     = [Ci     sum(-C_t_z(z1id:z0id,i)'.*dz(z1id:z0id))];
-    Ciwvl  = [Ciwvl  sum(-wvlC(z1id:z0id).*dz(z1id:z0id))];
-    Cimavg = [Cimavg sum(-mavgC(z1id:z0id).*dz(z1id:z0id))];
+    %Ciwvl  = [Ciwvl  sum(-wvlC(z1id:z0id).*dz(z1id:z0id))];
+    %Cimavg = [Cimavg sum(-mavgC(z1id:z0id).*dz(z1id:z0id))];
 end
 
 figure
 hold on
 plot(t,Ci)
-plot(t,Ciwvl)
-plot(t,Cimavg); hold off
-legend('Ci','Ci Wavelet smoothing','Ci moving average')
+%plot(t,Ciwvl)
+%plot(t,Cimavg); hold off
+%legend('Ci','Ci Wavelet smoothing','Ci moving average')
 P0=0;
 
 Vct  = {t,z,Cimavg,P0,c0,z0,z1,C_t_z};
@@ -61,7 +59,7 @@ rng default % for reproducibility]
 objconstr = @(x)PVD_Opt(x,Vct);
 IntCon = 1:2; lb = [1 1]; ub = [30 600];
 opts = optimoptions(@ga, ...
-                             'PopulationSize', 15, ...
+                             'PopulationSize', 10, ...
                              'MaxGenerations', 10, ...
                              'EliteCount', 2, ...
                              'FunctionTolerance', 1e-3); %...

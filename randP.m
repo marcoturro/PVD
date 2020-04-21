@@ -35,9 +35,9 @@ for r = 2:randi([4 6])
     beta = (1.2-0.4).*rand(1) + 0.4;
     p = p + ptmp/(beta*sum(ptmp));
     plt = plot(x01,p,'LineWidth',3);
-    pause(0.1)
-    hold on
-    legend()
+%     pause(0.1)
+%     hold on
+%     legend()
 end
 
 p(1)=0;

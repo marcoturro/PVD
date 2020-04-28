@@ -11,7 +11,7 @@ function [x01, p] = randP(refinement)
 %
 
 x01 = linspace(0,1,refinement);
-xpdf = linspace(-16,5,refinement);
+xpdf = linspace(-12,6,refinement);
 muev = -2; bev = 2;
 p = evpdf(xpdf,muev,bev);
 p = p/sum(p);
@@ -20,7 +20,7 @@ for i = 1:50
 ran(i) = vals(randi(numel(vals)));
 end
 
-figure('units','normalized','outerposition',[0 0 1 1])
+%figure('units','normalized','outerposition',[0 0 1 1])
 
 for r = 2:randi([4 6])
     signorm = (1.5-1)*rand(1) + 1;
@@ -34,12 +34,12 @@ for r = 2:randi([4 6])
     ptmp = normpdf(xpdf,muev+munorm(r),signorm);
     beta = (1.2-0.4).*rand(1) + 0.4;
     p = p + ptmp/(beta*sum(ptmp));
-    plt = plot(x01,p,'LineWidth',3);
+ %   plt = plot(x01,p,'LineWidth',3);
 %     pause(0.1)
-%     hold on
+    hold on
 %     legend()
 end
-
+plot(x01,p,'LineWidth',3);
 p(1)=0;
 p = p/sum(p);
 end

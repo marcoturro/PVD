@@ -1,4 +1,4 @@
-function [v, vmax, P] = PVD_solve(dat)
+function [v, P, ERR] = PVD_solve(dat)
 %%
 clearvars -except dat Disp
 
@@ -25,7 +25,7 @@ Disp = dat.Disp;
 for i = 1:length(Ci)
     if  1-abs(Ci(i)/Ci(1)) >= 0.01 %is this the best way to do it?
         tvmax = t(i-1);
-        dv = 40  * z1*(1/t(i+1)-1/t(i));
+        dv = 20  * z1*(1/t(i+1)-1/t(i));
         Pvmax = 1-abs(Ci(i-1)/Ci(1));
         break
     end
@@ -75,7 +75,7 @@ for k = 1:stp:length(t)-r
     
     err = sum((C-movmean(C_t_z(:,k),length(z)*0.05)').^2); % OVERALL ERROR
       
-    ERR = ERR + err;
+    ERR(k) = err;
        
     if Disp == 1
        [~, boundD] = min(abs(C_t_z(:,k)-c0*0.2)) ; [~, boundU] = min(abs(C_t_z(:,k)-c0*0.8));
@@ -143,8 +143,7 @@ for k = 1:stp:length(t)-r
             
 end
 
-
-
+ERR = max(ERR)/length(C);
 
 end
 

@@ -4,7 +4,7 @@ m = 101
 n = 100
 
 
-for j = 320:320
+for j = 320:6000
 load(['../ML_TRAINING_DATA/data_set_' num2str(j) '.mat']);
 if length(dat.C(:,1)) ~= length(dat.z)
     dat.C = dat.C';
@@ -23,5 +23,5 @@ for i = 2:m
 end
 dat = rmfield(dat,'C');
 dat.C = C;
-save(['./ML_Preprocessed_CNN_' num2str(m) '/data_set_' num2str(j) '.mat'],'dat')
+save(['./ML_TRAINING_DATA/ML_Preprocessed_CNN_' num2str(m) '/data_set_' num2str(j) '.mat'],'dat')
 end

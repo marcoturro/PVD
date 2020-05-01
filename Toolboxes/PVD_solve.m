@@ -79,9 +79,7 @@ for k = 1:stp:length(t)-r
        
     if Disp == 1
        [~, boundD] = min(abs(C_t_z(:,k)-c0*0.2)) ; [~, boundU] = min(abs(C_t_z(:,k)-c0*0.8));
-       %smallErr = sum((C(1:boundD)-movmean(f_C_t_z(1:boundD,k),length(f_z(1:boundD))*0.05)').^2);
-       %bigErr = sum((C(boundU:end)-movmean(f_C_t_z(boundU:end,k),length(f_z(boundU:end))*0.05)').^2);
-       
+  
        sb1 = subplot(3,2,[1 3 5]) ;
        
        plot(C,z,'--')
@@ -94,15 +92,6 @@ for k = 1:stp:length(t)-r
        legend('reconstructed data','input data','Measure points')
        set(gca,'FontSize',18)
        
-%        sb2 = subplot(3,3,[2 5 8]) ;
-%        
-%        plot(C_v(:,k)/max(C_v(:,k))*vmax,z,'--')
-%        title('Ks')
-%        ylim([min(z),max(z)])
-%        legend('v(C)')
-%        set(gca,'FontSize',18)
-%        hold on
-       
        sb3 = subplot(3,2,2);
        scatter(t(k),err)
        xlim([0 t(end)])
@@ -113,16 +102,7 @@ for k = 1:stp:length(t)-r
        hold on
 
        if k ==1
-           
-%        sb4 = subplot(3,2,4);
-%        plot(t,Ci,'--')
-%        hold on
-%        plot(ti,Ci_i,'LineWidth',2)
-%        xlim([0 t(end)])
-%        title('Integration Ci')
-%        legend('Original','Retained')
-%        set(gca,'FontSize',18)
-       
+
        sb5 = subplot(3,2,[4 6]);
        scatter(v,Pest./max(Pest))
        hold on

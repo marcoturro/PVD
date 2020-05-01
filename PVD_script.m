@@ -1,13 +1,10 @@
-clear 
+% clear 
 close all
 tic
-
-%data_fabrication_DL
-
 Disp = 1;
+addpath('./Toolboxes')
 
-%in = ['../TrainingData/data_set_' num2str(26) '.mat'];
-in = '../ML_TRAINING_DATA/data_set_317.mat';
+in = '../ML_TRAINING_DATA/ML_RO/data_set_5981.mat';
 data = load(in);
 
 try 

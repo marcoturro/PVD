@@ -19,7 +19,7 @@ try
     if m ~= length(z)
         C_t_z = C_t_z';
     end
-    if isfield(data.dat,'P')
+    if isfield(data,'P')
         Pr = data.P;
         vr = data.v;
         %vr = vr./(maxz/maxt);
@@ -38,35 +38,33 @@ for lmnop = 1:length(zz1)
 z1 = zz1(lmnop);
 z0 = 1;
 
-
 z1dim = z1 * max(abs(z));
 z0dim = z0 * max(abs(z));
-%sprintf(' z1 = %3.3f m ;  z0 = %3.3f m',z1dim,z0dim)
 
 c0 = mean(C_t_z(:,1));
 cN = mean(C_t_z(:,end));
 
-%C_v = C_t_z./c0.*(1-C_t_z./c0);
 
 [~, z1id] = min( abs( z + z1dim) );
 [~, z0id] = min( abs( z + z0dim) );
 
-Ci = zeros(1,length(t)) ; %Ciwvl = Ci;
+Ci = zeros(1,length(t)) ; 
 
-imax = min(find(1-abs(C_t_z(z1id,:)/c0) > 0.01))-1; %is this the best way to do it?
+imax = min(find(1-abs(C_t_z(z1id,:)/c0) > 0.001))-1; %is this the best way to do it?
 
-imin = max(find(abs(C_t_z(z0id,:)/c0) > 0.01));
+imin = max(find(abs(C_t_z(z0id,:)/c0) > 0.001));
 if isnan(imin)
     imin = length(t);
 end
+
 for i = 1:length(t)
     Ci(i)     = trapz(z(z1id:z0id),-C_t_z(z1id:z0id,i));
-    
 end
+
 tvmin = t(imin);
 Pvmin = abs(Ci(imin)/c0);
 tvmax = t(imax);
-dv = 5  * z1*(1/t(imax+1)-1/t(imax));
+dv = 12*z1*(1/t(imax+1)-1/t(imax));
 Pvmax = 1-abs(Ci(imax)/c0);
 
 
@@ -84,10 +82,9 @@ dat.dv = dv;
 dat.Pvmin = Pvmin;
 dat.Pvmax = Pvmax;
 dat.Disp = Disp;
-%= %struct('t',t,'z',z,'Ci',Ci,'c0',c0,'z0',z0dim,'z1'...
-% ,z1dim,'Disp',Disp,'C_t_z',C_t_z);%,'C_v',C_v); % Chose Ci or Ciwvl
 
-[vs, P, ERR] = PVD_solve(dat);
+
+[vs, P] = PVD_solve(dat);
 length(P)
 
 
@@ -104,9 +101,9 @@ Cmat = produce_data(P',vs,t(1:stp:end),z)';
 Ctest = C_t_z(:,1:stp:end);
 err(lmnop) = 1/length(Cmat(:))*sum((Cmat(:)-Ctest(:)).^2);
 
-plt = 0;
+plt = 1;
 if plt
-figure(lmnop)
+figure
 plot(Cmat,z,'+'); hold on;
 hold on
 title('Concentration profiles')
@@ -117,7 +114,7 @@ xlabel('C [g/L]'); ylabel('z [cm]')
 legend('reconstructed data','input data');
 set(gca,'FontSize',18)
 
-if realP
+if 1
     figure
     plot(vs,P); hold on;
     plot(vr,Pr);

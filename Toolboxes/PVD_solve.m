@@ -1,4 +1,4 @@
-function [v, P, ERR] = PVD_solve(dat)
+function [v, P] = PVD_solve(dat)
 clearvars -except dat Disp
 
 t = dat.t;

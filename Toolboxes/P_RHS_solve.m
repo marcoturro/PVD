@@ -51,12 +51,12 @@ P(P<0) = [];
 % vi = interp1([0 v(1)],[0 v(1)],0:dv:v(1));
 % v = [vi v(2:end)];
 
-%%
-rpgP = fitrgp(linspace(v(1),1,length(v))',P,'Basis','linear',...
-     'FitMethod','exact','PredictMethod','exact'); %,'KernelFunction','exponential'); for rougher datasets?
-
-Pfit = resubPredict(rpgP);
-Pfit = Pfit./sum(Pfit);
+% %%
+% rpgP = fitrgp(linspace(v(1),1,length(v))',P,'Basis','linear',...
+%      'FitMethod','exact','PredictMethod','exact'); %,'KernelFunction','exponential'); for rougher datasets?
+% 
+% Pfit = resubPredict(rpgP);
+% Pfit = Pfit./sum(Pfit);
 Pest = P./sum(P);
 
 end

@@ -28,10 +28,10 @@ for i = 1:length(v)
     A(i,i) = 1;
     
 end
-A(1,:) = 0;
+A(1,:) = Pvmax;
 A(1,1) = 1;
-A(end,:)=0;
-A(end,end)=1;
+A(end,:) = Pvmin;
+A(end,end) = 1;
 
 rhs = (dddtCint./v.^3)';
 %rhs(1) = Pvmax ; %vmax condition

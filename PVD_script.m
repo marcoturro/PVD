@@ -33,6 +33,7 @@ end
 
 
 zz1 = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.95,0.98];
+
 for lmnop = 1:length(zz1)
 z1 = zz1(lmnop);
 z0 = 1;
@@ -77,11 +78,10 @@ dat.Ci = Ci;
 dat.c0 = c0;
 dat.z0 = z0;
 dat.z1 = z1;
-dat.C_t_z = C_t_z;
 dat.tvmin = tvmin;
 dat.tvmax = tvmax;
 dat.dv = dv;
-dat.Pvmin =Pvmin;
+dat.Pvmin = Pvmin;
 dat.Pvmax = Pvmax;
 dat.Disp = Disp;
 %= %struct('t',t,'z',z,'Ci',Ci,'c0',c0,'z0',z0dim,'z1'...

@@ -5,27 +5,18 @@ pltC = 0; %display the concentration profiles
 pltP = 0; % display the PVDs
 pltE = 1; % display the 
 
-in = 'infile';
-data = importdata(in);
+in = './Raphael/created_data/data_set_2.mat';
+dat = importdata(in);
 
+% step 1 normalise the data 
 
 try
-    t = data.t;
-    z = data.z; % attention untis of z
-    C_t_z = data.C;
-    [m, ~] = size(C_t_z);
-    if m ~= length(z)
-        C_t_z = C_t_z';
-    end
-    if isfield(data,'P')
-        Pr = data.P;
-        vr = data.v;
-        realP = 1;
-    else
-        realP = 0;
-    end
+    vmax = dat.v(end);
+    [C_t_z, z, t, v, P] = data_norm(dat,vmax);
 catch
-    
+    vmax = input('vmax? \n');
+    [C_t_z, z, t, vr, Pr] = data_norm(dat,vmax);
+    realP = 0;
 end
 
 zz1 = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.95,0.98]; 
@@ -59,7 +50,7 @@ Pvmin = abs(Ci(imin)/c0);
 tvmax = t(imax);
 Pvmax = 1-abs(Ci(imax)/c0);
 
-K = ;
+K = 12;
 dv = K*z1*(1/t(imax+1)-1/t(imax));
 
 solve.t =t;

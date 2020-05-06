@@ -1,25 +1,16 @@
-function [v, P] = PVD_solve(dat)
-clearvars -except dat Disp
+function [v, P] = PVD_solve(solve)
 
-t = dat.t;
-z = dat.z;
-Ci = dat.Ci;
-c0 = dat.c0;
-z0 = dat.z0;
-z1 = dat.z1;
-tvmin = dat.tvmin;
-tvmax = dat.tvmax;
-dv = dat.dv;
-Pvmin = dat.Pvmin;
-Pvmax = dat.Pvmax;
-%C_v = dat.C_v;
-Disp = dat.Disp;
-
- if ~exist('Disp','var')
-     % third parameter does not exist, so default it to something
-      Disp = 0;
- end
-
+t = solve.t;
+z = solve.z;
+Ci = solve.Ci;
+c0 = solve.c0;
+z0 = solve.z0;
+z1 = solve.z1;
+tvmin = solve.tvmin;
+tvmax = solve.tvmax;
+dv = solve.dv;
+Pvmin = solve.Pvmin;
+Pvmax = solve.Pvmax;
 
 vmax= z1/tvmax ;
 vmin = z0/tvmin;

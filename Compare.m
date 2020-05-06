@@ -18,7 +18,7 @@ try
     C_t_z = dat.C;
     [m, ~] = size(C_t_z);
     if m ~= length(z)
-        error('the data is not normalised')
+        C_t_z = C_t_z';
     end
     if isfield(dat,'P')
         Pr = dat.P;
@@ -47,6 +47,7 @@ z0dim = z0 * max(abs(z));
 [~, z0id] = min( abs( z + z0dim) );
 
 Ci = zeros(1,length(t)) ;
+
 for i = 1:length(t)
      
     Ci(i)     = trapz(z(z1id:z0id),-C_t_z(z1id:z0id,i));
@@ -94,8 +95,8 @@ for k = 1:stp:length(t)-r
         Cm = ci(ci0m(j),v(j),z,t(k)) + Cm;
     end
     
-    erra = sum(1./100*(Ca'-C_t_z(:,k)).^2) + erra;
-    errm = sum(1./100*(Cm'-C_t_z(:,k)).^2) + errm;
+    erra = sum(1./length(Ca)*(Ca'-C_t_z(:,k)).^2) + erra;
+    errm = sum(1./length(Cm)*(Cm'-C_t_z(:,k)).^2) + errm;
 end
 
 ErraC(p-data2comp(1)+1) = erra;

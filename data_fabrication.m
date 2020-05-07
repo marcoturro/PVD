@@ -1,0 +1,66 @@
+close all
+clear
+
+
+nbOfSets = 20;
+tic
+for s = 1:nbOfSets
+   clearvars -except s nbOfSets 
+%%
+[vad, Pv] = randP(randi([90 140],1)); 
+vs = linspace(0,0.000005*randi([20,30],1),length(vad)+1); % for realism
+vs = vs(2:end);
+
+c0tot = 0.5;
+t = linspace(0,randi([8000 10000],1),randi([1000 1200],1)); %to be twitched
+ci0 = c0tot * Pv;
+z = 0:-0.01*randi([8 10],1):-10*randi([2 5],1);
+z = z./100;
+
+ci = @(ci0,vs,z,t)(ci0*(1-heaviside(z+vs*t)));
+ci2 =  @(ci0,vs,z,t)(ci0*sigmoid(z,vs*t));
+C = [];
+
+%%
+C = zeros(length(z),length(t));
+for k = 1:ceil(length(t)/3)
+    %t(k)/t(end)*100
+    Ci = 0;
+    for i = 1:length(Pv)
+        Ci = ci(ci0(i),vs(i),z,t(k)) + Ci;
+    end
+    Ci = movmean(Ci,7);
+    f_1 = 5000;
+    a_1 = 600;
+    
+    f_2 = 0.01;
+    a_2 = 1/100;
+    g_2 = 1.5*max(abs(z));
+    v_2 = f_2*g_2;
+    
+    f_3 = 0.05;
+    a_3 = 1/250;
+    g_3 = 0.5*max(abs(z));
+    v_3 = f_2*g_2;
+    
+    Ci = awgn(Ci,56)+ Ci.*awgn(sin(z*f_1)/a_1,50) + Ci.*awgn(sin((z-v_2*t(k))*2*pi/g_2)*a_2,65) + Ci.*awgn(sin((z-v_3*t(k))*2*pi/g_3)*a_3,65);
+    
+%      plot(Ci,z)
+%      xlim([0 1.3*c0tot]);
+%      ylim([min(z) max(z)]);
+%      pause(0.2)
+%     
+    C(:,k) = Ci';
+    
+end
+
+
+plot(Pv)
+fileID_Cdata= ['./Marco/created_data/data_set_' num2str(s) '.mat'];
+dat = struct('C',C,'t',t,'z',z,'P',Pv,'v',vs);
+save(fileID_Cdata,'dat')
+
+sprintf([num2str(s) ' out of ' num2str(nbOfSets)])
+
+end
+toc

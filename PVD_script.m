@@ -1,18 +1,18 @@
 clear; close all; tic
 addpath('./Toolboxes')
 
-pltC = 0; %display the concentration profiles
-pltP = 0; % display the PVDs
-pltE = 1; % display the 
+pltC = 1; %display the concentration profiles
+pltP = 1; % display the PVDs
+pltE = 0; % display the 
 
-in = './Raphael/created_data/data_set_2.mat';
+in = './Raphael/created_data/data_set_1.mat';
 dat = importdata(in);
 
 % step 1 normalise the data 
 
 try
     vmax = dat.v(end);
-    [C_t_z, z, t, v, P] = data_norm(dat,vmax);
+    [C_t_z, z, t, vr, Pr] = data_norm(dat,vmax);
 catch
     vmax = input('vmax? \n');
     [C_t_z, z, t, vr, Pr] = data_norm(dat,vmax);
@@ -34,24 +34,31 @@ Ci = zeros(1,length(t)) ;
 
 % this section aims to find the spatial limits within which the relevant
 % information is found.
-imax = find(1-abs(C_t_z(z1id,:)/c0) > 0.001, 1 )-1; 
-imin = find(abs(C_t_z(z0id,:)/c0) > 0.001, 1, 'last' );
+cl
+for i = 1:length(t)
+    Ci(i)     = trapz(z(z1id:z0id),-C_t_z(z1id:z0id,i));
+end
+% 
+Ci = wdenoise(Ci,8);
+order = 3; frame = 15;
+Ci = sgolayfilt(Ci,order,frame);
+
+
+imax = find(1-abs(Ci/Ci(1)) > 0.001,1) - 1;
+imin = find(abs(Ci/Ci(1)) > 0.001, 1, 'last' );
 
 if isnan(imin)
     imin = length(t);
 end
 
-for i = 1:length(t)
-    Ci(i)     = trapz(z(z1id:z0id),-C_t_z(z1id:z0id,i));
+if imax < 5 
+    imax = 10;
 end
 
 tvmin = t(imin);
 Pvmin = abs(Ci(imin)/c0);
 tvmax = t(imax);
 Pvmax = 1-abs(Ci(imax)/c0);
-
-K = 12;
-dv = K*z1*(1/t(imax+1)-1/t(imax));
 
 solve.t =t;
 solve.z = z;
@@ -61,7 +68,6 @@ solve.z0 = z0;
 solve.z1 = z1;
 solve.tvmin = tvmin;
 solve.tvmax = tvmax;
-solve.dv = dv;
 solve.Pvmin = Pvmin;
 solve.Pvmax = Pvmax;
 

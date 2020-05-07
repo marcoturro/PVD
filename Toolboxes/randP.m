@@ -9,21 +9,20 @@ function [x01, p] = randP(refinement)
 % similar to known PSD taken from GILLARD () and from known sediment
 % analysis of CCFZ samples
 %
-
+close all
 x01 = linspace(0,1,refinement);
-xpdf = linspace(-12,6,refinement);
-muev = -2; bev = 2;
+xpdf = linspace(-35,15,refinement);
+muev = 1; bev = 2;
 p = evpdf(xpdf,muev,bev);
 p = p/sum(p);
-ran = zeros(1,50); vals = [-5 -4 -3 -2 -1 0 -3 -1 1 3 4 3 4 5];
+ran = zeros(1,50); vals = [-28 -30 -19 -2 -12 -16 -1 0 -3 -10 1 4 9 5 8];
 for i = 1:50
 ran(i) = vals(randi(numel(vals)));
 end
 
 %figure('units','normalized','outerposition',[0 0 1 1])
 
-for r = 2:randi([4 6])
-    signorm = (1.5-1)*rand(1) + 1;
+for r = 2:randi([5 10])
     munorm(r) = ran(randi(numel(ran)));
     if munorm(r) == munorm(r-1)
         munorm(r) = ran(randi(numel(ran)));
@@ -31,15 +30,18 @@ for r = 2:randi([4 6])
     if munorm(r) == munorm(r-1)
         munorm(r) = ran(randi(numel(ran)));
     end
-    ptmp = normpdf(xpdf,muev+munorm(r),signorm);
-    beta = (1.2-0.4).*rand(1) + 0.4;
-    p = p + ptmp/(beta*sum(ptmp));
- %   plt = plot(x01,p,'LineWidth',3);
-%     pause(0.1)
-    hold on
-%     legend()
+    if munorm(r) < -8
+        signorm = (3-1.5)*rand(1) + 1;
+        ptmp =  normpdf(xpdf,muev+munorm(r),signorm)/(randi([2 5]));
+    else
+        signorm = (1-0.5)*rand(1) + 1;
+        ptmp = normpdf(xpdf,muev+munorm(r),signorm);
+    end
+    p = p + ptmp;
 end
-plot(x01,p,'LineWidth',3);
-p(1)=0;
+p = movmean(p,ceil(refinement/30));
+%p = interp1(xpdf,p,x01)
 p = p/sum(p);
+
+plot(xpdf,p)
 end

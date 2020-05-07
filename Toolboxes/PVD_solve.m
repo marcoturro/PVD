@@ -8,14 +8,17 @@ z0 = solve.z0;
 z1 = solve.z1;
 tvmin = solve.tvmin;
 tvmax = solve.tvmax;
-dv = solve.dv;
 Pvmin = solve.Pvmin;
 Pvmax = solve.Pvmax;
 
 vmax= z1/tvmax ;
 vmin = z0/tvmin;
 
-v = vmax:dv:vmin;
+%dv = -0.1*vmin;
+
+%v = vmax:dv:vmin;
+v = flip(linspace(vmin,vmax,100));
+
 ti = z0./v;
 
 Ci_i = interp1(t,Ci,ti);

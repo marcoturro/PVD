@@ -6,7 +6,7 @@ v_star = v*a;
 A = zeros(length(ti));
 
 rpgddt = fitrgp(ti',dddtCint','Basis','linear',...
-      'FitMethod','exact','PredictMethod','exact'); %,'KernelFunction','exponential'); for rougher datasets?
+      'FitMethod','exact','PredictMethod','exact');
 %dddtCint = resubPredict(rpgddt)';
 
 for i = 1:length(v)

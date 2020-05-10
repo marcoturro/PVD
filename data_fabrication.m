@@ -1,11 +1,13 @@
 close all
 clear
+addpath('./Toolboxes')
 
 
-nbOfSets = 20;
+sets = 21:40;
+
 tic
-for s = 1:nbOfSets
-   clearvars -except s nbOfSets 
+for s = sets
+   clearvars -except s sets
 %%
 [vad, Pv] = randP(randi([90 140],1)); 
 vs = linspace(0,0.000005*randi([20,30],1),length(vad)+1); % for realism
@@ -23,7 +25,7 @@ C = [];
 
 %%
 C = zeros(length(z),length(t));
-for k = 1:ceil(length(t)/3)
+for k = 1:length(t)
     %t(k)/t(end)*100
     Ci = 0;
     for i = 1:length(Pv)
@@ -43,24 +45,23 @@ for k = 1:ceil(length(t)/3)
     g_3 = 0.5*max(abs(z));
     v_3 = f_2*g_2;
     
-    Ci = awgn(Ci,56)+ Ci.*awgn(sin(z*f_1)/a_1,50) + Ci.*awgn(sin((z-v_2*t(k))*2*pi/g_2)*a_2,65) + Ci.*awgn(sin((z-v_3*t(k))*2*pi/g_3)*a_3,65);
-    
-%      plot(Ci,z)
-%      xlim([0 1.3*c0tot]);
-%      ylim([min(z) max(z)]);
-%      pause(0.2)
+    Ci = awgn(Ci,48) + Ci.*awgn(Ci,60)/5; % + Ci.*awgn(sin((z-v_2*t(k))*2*pi/g_2)*a_2,65) + Ci.*awgn(sin((z-v_3*t(k))*2*pi/g_3)*a_3,65);
+
+%       plot(Ci,z)
+%       xlim([0 1.3*c0tot]);
+%       ylim([min(z) max(z)]);
+%       pause(0.2)
 %     
     C(:,k) = Ci';
     
 end
 
-
-plot(Pv)
+%plot(Pv)
 fileID_Cdata= ['./Marco/created_data/data_set_' num2str(s) '.mat'];
 dat = struct('C',C,'t',t,'z',z,'P',Pv,'v',vs);
 save(fileID_Cdata,'dat')
 
-sprintf([num2str(s) ' out of ' num2str(nbOfSets)])
+sprintf([num2str(s-length(sets)) ' out of ' num2str(length(sets))])
 
 end
 toc

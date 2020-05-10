@@ -1,4 +1,4 @@
-function mass_data_fabrication_ML_random_gauss(cnt_max)
+ function mass_data_fabrication_ML_random_gauss(cnt_max)
 addpath './Raphael'
 
 if ~exist('../ML_TRAINING_DATA','dir')

@@ -3,63 +3,92 @@ close all
 tic
 addpath('./Toolboxes')
 
-data2comp = 6001:8000;
+data2comp = 8001:8995;
 
 for p = data2comp 
 inA = ['../ML_TRAINING_DATA/ML_RO/data_set_' num2str(p) '.mat'];
 load(inA);
 
-inM = ['../Model/CNN_time_Model/PVDs/PVDML_ds_'  num2str(p) '.txt'];
+inM = ['../Model/VGG16/PVDs/PVDML_ds_'  num2str(p) '.txt'];
 Pm = load(inM);
 
-try 
-    t = dat.t;
-    z = dat.z; % attention untis of z
-    C_t_z = dat.C;
-    [m, ~] = size(C_t_z);
-    if m ~= length(z)
-        C_t_z = C_t_z';
-    end
-    if isfield(dat,'P')
-        Pr = dat.P;
-        vr = dat.v;
-        vr = dat.v/max(dat.v);
-        realP = 1;
-    else
-        realP = 0;
-    end
+try
+    vmax = dat.v(end);
+    [C_t_z, z, t, vr, Pr] = data_norm(dat,vmax);
 catch
-    
+    vmax = input('vmax? \n');
+    [C_t_z, z, t, vr, Pr] = data_norm(dat,vmax);
+    realP = 0;
 end
 
-z1 = 0.95; 
-z0 = 1;
+zz1 = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.95,0.98]; 
 
+ci = @(ci0,vs,z,t)(ci0*(1-heaviside(z+vs*t)));
 c0 = mean(C_t_z(:,1));
-cN = mean(C_t_z(:,end));
 
-C_v = C_t_z./c0.*(1-C_t_z./c0);
+for lmnop = 1:length(zz1)
+z1 = zz1(lmnop);
+z0 = 1;
+[~, z1id] = min( abs( z + z1) );
+[~, z0id] = min( abs( z + z0) );
 
-z1dim = z1 * max(abs(z));
-z0dim = z0 * max(abs(z));
+Ci = zeros(1,length(t)) ; 
 
-[~, z1id] = min( abs( z + z1dim) );
-[~, z0id] = min( abs( z + z0dim) );
-
-Ci = zeros(1,length(t)) ;
+% this section aims to find the spatial limits within which the relevant
+% information is found.
 
 for i = 1:length(t)
-     
     Ci(i)     = trapz(z(z1id:z0id),-C_t_z(z1id:z0id,i));
+end
+% 
+Ci = wdenoise(Ci,8);
+order = 3; frame = 15;
+Ci = sgolayfilt(Ci,order,frame);
 
+
+imax = find(1-abs(Ci/Ci(1)) > 0.001,1) - 1;
+imin = find(abs(Ci/Ci(1)) > 0.001, 1, 'last' );
+
+if isnan(imin)
+    imin = length(t);
 end
 
-Ci = Ci./max(Ci);
+if imax < 5 
+    imax = 10;
+end
 
-clstr  = struct('t',t,'z',z,'Ci',Ci,'c0',c0,'z0',z0dim,'z1'... 
-                ,z1dim,'Disp',0,'C_t_z',C_t_z,'C_v',C_v);
+tvmin = t(imin);
+Pvmin = abs(Ci(imin)/c0);
+tvmax = t(imax);
+Pvmax = 1-abs(Ci(imax)/c0);
 
-[vs, Pa, ERR] = PVD_solve(clstr);
+solve.t =t;
+solve.z = z;
+solve.Ci = Ci;
+solve.c0 = c0;
+solve.z0 = z0;
+solve.z1 = z1;
+solve.tvmin = tvmin;
+solve.tvmax = tvmax;
+solve.Pvmin = Pvmin;
+solve.Pvmax = Pvmax;
+
+
+[vs, P] = PVD_solve(solve);
+
+Pae{lmnop} = P/sum(P);
+Nv = length(P);
+stp = fix(length(t)/20);
+Cmat = produce_data(P',vs,t(1:stp:end),z)';
+Ctest = C_t_z(:,1:stp:end);
+EAz(lmnop) = 1/length(Cmat(:))*sum((Cmat(:)-Ctest(:)).^2);
+vsz{lmnop} = vs;
+end
+
+[val, id] = min(EAz);
+Pa = Pae{id};
+vs = vsz{id};
+%%
 
 v = linspace(0,1,100);
 
@@ -106,7 +135,7 @@ ErraP(p-data2comp(1)+1) = sum(1./100*(Pai - Pri).^2);
 ErrmP(p-data2comp(1)+1) = sum(1./100*(Pm' - Pri).^2);
 
 end
-
+%%
 group = [1 * ones(size(ErraC));
          2 * ones(size(ErrmC))];
 measure = [ErraC; ErrmC];

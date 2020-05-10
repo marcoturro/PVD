@@ -3,13 +3,13 @@ close all
 tic
 addpath('./Toolboxes')
 
-data2comp = 8001:8995;
+data2comp = 1:20;
 
 for p = data2comp 
-inA = ['../ML_TRAINING_DATA/ML_RO/data_set_' num2str(p) '.mat'];
+inA = ['./Marco/created_data/data_set_' num2str(p) '.mat'];
 load(inA);
 
-inM = ['../Model/VGG16/PVDs/PVDML_ds_'  num2str(p) '.txt'];
+inM = ['../Model/VGG16/PVDs/ML_Noisy/PVDML_ds_'  num2str(p) '.txt'];
 Pm = load(inM);
 
 try

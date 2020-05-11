@@ -25,7 +25,7 @@ C = [];
 
 %%
 C = zeros(length(z),length(t));
-for k = 1:length(t)
+for k = 1:50:length(t)/3
     %t(k)/t(end)*100
     Ci = 0;
     for i = 1:length(Pv)
@@ -45,13 +45,13 @@ for k = 1:length(t)
     g_3 = 0.5*max(abs(z));
     v_3 = f_2*g_2;
     
-    Ci = awgn(Ci,48) + Ci.*awgn(Ci,60)/5; % + Ci.*awgn(sin((z-v_2*t(k))*2*pi/g_2)*a_2,65) + Ci.*awgn(sin((z-v_3*t(k))*2*pi/g_3)*a_3,65);
+   Ci = awgn(Ci,48) + Ci.*awgn(Ci,60)/5; % + Ci.*awgn(sin((z-v_2*t(k))*2*pi/g_2)*a_2,65) + Ci.*awgn(sin((z-v_3*t(k))*2*pi/g_3)*a_3,65);
 
-%       plot(Ci,z)
-%       xlim([0 1.3*c0tot]);
-%       ylim([min(z) max(z)]);
-%       pause(0.2)
-%     
+      plot(Ci,z)
+      xlim([0 1.3*c0tot]);
+      ylim([min(z) max(z)]);
+      pause(0.5)
+    
     C(:,k) = Ci';
     
 end
@@ -59,7 +59,7 @@ end
 %plot(Pv)
 fileID_Cdata= ['./Marco/created_data/data_set_' num2str(s) '.mat'];
 dat = struct('C',C,'t',t,'z',z,'P',Pv,'v',vs);
-save(fileID_Cdata,'dat')
+%save(fileID_Cdata,'dat')
 
 sprintf([num2str(s-length(sets)) ' out of ' num2str(length(sets))])
 

@@ -3,10 +3,10 @@ close all
 tic
 addpath('./Toolboxes')
 
-data2comp = 1:20;
+data2comp = 1:10;
 
 for p = data2comp 
-inA = ['./Marco/created_data/data_set_' num2str(p) '.mat'];
+inA = ['./Marco/created_data/ML_Noisy/data_set_' num2str(p) '.mat'];
 load(inA);
 
 inM = ['../Model/VGG16/PVDs/ML_Noisy/PVDML_ds_'  num2str(p) '.txt'];
@@ -134,6 +134,13 @@ ErrmC(p-data2comp(1)+1) = errm;
 ErraP(p-data2comp(1)+1) = sum(1./100*(Pai - Pri).^2);
 ErrmP(p-data2comp(1)+1) = sum(1./100*(Pm' - Pri).^2);
 
+figure
+plot(Pri,'--')
+hold on
+plot(Pai,'Linewidth',2)
+plot(Pm,'Linewidth',2)
+legend('Original PVD','Anlytic', 'ML')
+set(gca,'FontSize',18)
 end
 %%
 group = [1 * ones(size(ErraC));

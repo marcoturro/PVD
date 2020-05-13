@@ -43,5 +43,5 @@ p = movmean(p,ceil(refinement/30));
 %p = interp1(xpdf,p,x01)
 p = p/sum(p);
 
-plot(xpdf,p)
+% plot(xpdf,p)
 end

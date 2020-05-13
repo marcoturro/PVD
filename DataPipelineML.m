@@ -11,7 +11,7 @@ type = 'linear'
 Data_Pool = './Marco/created_data'
 Save = '../ML_TRAINING_DATA/ML_Noisy';
 
-for DatN = 1:20
+for DatN = 1:3000
     
 load([Data_Pool '/data_set_' num2str(DatN) '.mat'])
 

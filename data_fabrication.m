@@ -57,8 +57,8 @@ for k = 1:length(t)
     
 end
 
-%plot(Pv)
-fileID_Cdata= ['../ML_TRAINING_DATA/ML_MT/Clean_b2/data_set_' num2str(s) '.mat'];
+%%
+fileID_Cdata= ['./Marco/created_data/data_set_' num2str(s) '.mat'];
 dat = struct('C',C,'t',t,'z',z,'P',Pv,'v',vs);
 save(fileID_Cdata,'dat')
 

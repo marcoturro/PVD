@@ -3,7 +3,7 @@ clear
 addpath('./Toolboxes')
 
 
-sets = 1:3000;
+sets = 3001:5000;
 
 tic
 for s = sets
@@ -45,13 +45,14 @@ for k = 1:length(t)
     g_3 = 0.5*max(abs(z));
     v_3 = f_2*g_2;
     
-   Ci = awgn(Ci,48) + Ci.*awgn(Ci,60)/5; % + Ci.*awgn(sin((z-v_2*t(k))*2*pi/g_2)*a_2,65) + Ci.*awgn(sin((z-v_3*t(k))*2*pi/g_3)*a_3,65);
-
+   Cin = awgn(Ci,48) + Ci.*awgn(Ci,60)/5; % + Ci.*awgn(sin((z-v_2*t(k))*2*pi/g_2)*a_2,65) + Ci.*awgn(sin((z-v_3*t(k))*2*pi/g_3)*a_3,65);
+   
 %       plot(Ci,z)
 %       xlim([0 1.3*c0tot]);
 %       ylim([min(z) max(z)]);
 %       pause(0.5)
     
+    Cn(:,k) = Cin';
     C(:,k) = Ci';
     
 end
@@ -61,7 +62,11 @@ fileID_Cdata= ['./Marco/created_data/data_set_' num2str(s) '.mat'];
 dat = struct('C',C,'t',t,'z',z,'P',Pv,'v',vs);
 save(fileID_Cdata,'dat')
 
-sprintf([num2str(s) ' out of ' num2str(length(sets))])
+fileID_Cdata= ['../ML_TRAINING_DATA/ML_MT/Noisy_b2/data_set_' num2str(s) '.mat'];
+dat = struct('C',Cn,'t',t,'z',z,'P',Pv,'v',vs);
+save(fileID_Cdata,'dat')
+
+sprintf([num2str(s) ' out of ' num2str(sets(end))])
 
 end
 toc

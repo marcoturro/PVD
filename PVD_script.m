@@ -34,7 +34,7 @@ Ci = zeros(1,length(t)) ;
 
 % this section aims to find the spatial limits within which the relevant
 % information is found.
-cl
+
 for i = 1:length(t)
     Ci(i)     = trapz(z(z1id:z0id),-C_t_z(z1id:z0id,i));
 end

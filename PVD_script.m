@@ -2,14 +2,16 @@ clear; close all; tic
 addpath('./Toolboxes')
 
 pltC = 1; %display the concentration profiles
-pltP = 1; % display the PVDs
+pltP = 0; % display the PVDs
 pltE = 0; % display the 
+No = 1500;
 
-in = './Raphael/created_data/data_set_1.mat';
+in = 'C:\Users\ENDLab_W10\DSLR\05c\05c.mat';
 dat = importdata(in);
 
 % step 1 normalise the data 
 
+dat.C = dat.C-min(dat.C(:,end));
 try
     vmax = dat.v(end);
     [C_t_z, z, t, vr, Pr] = data_norm(dat,vmax);
@@ -72,24 +74,30 @@ solve.Pvmin = Pvmin;
 solve.Pvmax = Pvmax;
 
 
-[vs, P] = PVD_solve(solve);
+[vs, P] = PVD_solve(solve,No);
 length(P)
 
 P = P/sum(P);
 Nv = length(P);
-stp = fix(length(t)/20);
+stp = fix(length(t)/7);
 Cmat = produce_data(P',vs,t(1:stp:end),z)';
 Ctest = C_t_z(:,1:stp:end);
 err(lmnop) = 1/length(Cmat(:))*sum((Cmat(:)-Ctest(:)).^2);
 
+Cmatinerp = movmean(Cmat,20);
 if pltC
 figure
-plot(Cmat,z,'+'); hold on;
+hold on
+for col = 1:length(Cmat(1,:))
+R = rand; G = rand; B = rand;
+plot(Cmat(:,col),z,'-+','color',[R,G,B]); 
+plot(C_t_z(:,(col-1)*stp+1),z,'color',[R,G,B]);
+end
 title('Concentration profiles')
 xlim([0 c0*1.1]); ylim([min(z),max(z)])
-plot(C_t_z(:,1:stp:end),z);
-xlabel('C [g/L]'); ylabel('z [cm]')
-legend('reconstructed data','input data');
+xlabel('C [g/L]'); ylabel('z')
+
+% legend('reconstructed data','input data');
 set(gca,'FontSize',18)
 
 if pltP

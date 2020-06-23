@@ -30,7 +30,7 @@ switch type
         C(1+Pad:kernel+Pad,1+Pad:end-Pad) = ones(kernel,1)*interp1(linspace(0,1,length(dat.t(1:ti))),dat.t(1:ti),linspace(0,1,Isize))/10;
         dx = linspace(0,dat.t(ti),Isize); %linear 
         for i = kernel + Pad +1 : kernel + Pad + Isize
-            C(i,1+Pad:end-Pad) = interp1(linspace(0,dat.t(ti),ti),dat.C(i-kernel - Pad,1:ti),dx)';
+            C(i,1+Pad:end-Pad) = interp1(dat.t(1:ti),dat.C(i - kernel - Pad,1:ti),dx)';
         end
       
 end

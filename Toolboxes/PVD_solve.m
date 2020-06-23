@@ -1,4 +1,4 @@
-function [v, P] = PVD_solve(solve)
+function [v, P] = PVD_solve(solve,N)
 
 t = solve.t;
 z = solve.z;
@@ -17,7 +17,7 @@ vmin = z0/tvmin;
 %dv = -0.1*vmin;
 
 %v = vmax:dv:vmin;
-v = flip(linspace(vmin,vmax,100));
+v = flip(linspace(vmin,vmax,N));
 
 ti = z0./v;
 

@@ -18,8 +18,9 @@ end
 C_zi = zeros(sizeZ,length(t));
 
 for i=1:length(t)
-    C_zi(:,i) = interp1(z,C(:,i),linspace(0,z(end),sizeZ))';
+    C_zi(:,i) = interp1(z,C(:,i),linspace(0,z(end),sizeZ),'linear','extrap')';
 end
+
 
 C_zi(C_zi<0) = 0;
 C = C_zi/max(max(C_zi));

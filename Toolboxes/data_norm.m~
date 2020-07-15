@@ -1,0 +1,51 @@
+function [C,z,t,v,P] = data_norm(data,vmax)
+% Normalises the data to a standard shape as well as
+% adimensionalising the time vector based on the maximum 
+% velocity (vmax) and the lowest space point (zL)
+
+C = data.C;
+z = data.z;
+t = data.t;
+
+sizeZ = 100;
+
+%%%%%%%%%%%%% Process of C matrix %%%%%%%%%%%%%%%
+
+if length(C(:,1)) ~= length(z)
+    C = C';
+end
+
+C_zi = zeros(sizeZ,length(t));
+
+for i=1:length(t)
+    C_zi(:,i) = interp1(z,C(:,i),linspace(0,z(end),sizeZ),'cua)';
+end
+
+
+C_zi(C_zi<0) = 0;
+C = C_zi/max(max(C_zi));
+
+%%%%%%%%%%%%% Process z vector %%%%%%%%%%%%%%%%%%
+
+zL = max(abs(z));
+z = linspace(0,z(end),sizeZ)/zL;
+
+%%%%%%%%%%%%%% Process t vector %%%%%%%%%%%%%%%%%
+
+t = t/(zL/vmax);
+
+%%%%% Process, if existing v and P vectors %%%%%%
+
+try
+    v = data.v;
+    P = data.P;
+    v = v/vmax;
+    P = interp1([0 v],[0 P],linspace(0,1,100));
+    v = linspace(0,1,100);
+    P = P/max(data.P);
+catch
+    v = zeros(1,100);
+    P = zeros(1,100);
+end
+
+end

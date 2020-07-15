@@ -14,9 +14,6 @@ Pvmax = solve.Pvmax;
 vmax= z1/tvmax ;
 vmin = z0/tvmin;
 
-%dv = -0.1*vmin;
-
-%v = vmax:dv:vmin;
 v = flip(linspace(vmin,vmax,N));
 
 ti = z0./v;

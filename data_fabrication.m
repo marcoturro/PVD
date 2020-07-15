@@ -47,10 +47,10 @@ for k = 1:length(t)
     
    Cin = awgn(Ci,48) + Ci.*awgn(Ci,60)/5; % + Ci.*awgn(sin((z-v_2*t(k))*2*pi/g_2)*a_2,65) + Ci.*awgn(sin((z-v_3*t(k))*2*pi/g_3)*a_3,65);
    
-%       plot(Ci,z)
-%       xlim([0 1.3*c0tot]);
-%       ylim([min(z) max(z)]);
-%       pause(0.5)
+       plot(Ci,z)
+       xlim([0 1.3*c0tot]);
+       ylim([min(z) max(z)]);
+       pause(0.5)
     
     Cn(:,k) = Cin';
     C(:,k) = Ci';

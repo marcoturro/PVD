@@ -34,8 +34,8 @@ A(end,:) = Pvmin;
 A(end,end) = 1;
 
 rhs = (dddtCint./v.^3)';
-%rhs(1) = Pvmax ; %vmax condition
-%rhs(end) = Pvmin ; %vmin condition
+rhs(1) = Pvmax ; %vmax condition
+rhs(end) = Pvmin ; %vmin condition
 P = linsolve(A,rhs);
 
 

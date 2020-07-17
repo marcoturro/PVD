@@ -3,15 +3,12 @@ addpath('./Toolboxes')
 
 pltC = 1; %display the concentration profiles
 pltP = 1; % display the PVDs
-pltE = 0; % display the 
-No = 1000;
+pltE = 1; % display the 
+No = 100;
 
-in = './exp_data/photo2.7.13.mat';
-% in = './Raphael/created_data/data_set_41.mat';
+%in = './exp_data/photo1.7.13.mat';
+in = './Raphael/created_data/data_set_41.mat';
 dat = importdata(in);
-
-% step 1 normalise the data 
-dat.C = dat.C-min(dat.C(:,end));
 
 try
     vmax = dat.v(end);
@@ -23,8 +20,8 @@ catch
 end
 
 
-zz1 = [0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.95,0.98];
-
+% zz1 = [0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.95,0.98];
+zz1 = 0.3
 c0 = 1; % mean(C_t_z(:,1));
 
 for lmnop = 1:length(zz1)
@@ -46,8 +43,8 @@ Ci = wdenoise(Ci,8);
 Ci = movmean(Ci,3);
 order = 3; frame = 15;
 Ci = sgolayfilt(Ci,order,frame);
-tfine = linspace(0,t(end),4000);
-Ci_fine = interp1(t,Ci,tfine);
+% tfine = linspace(0,t(end),4000);
+% Ci_fine = interp1(t,Ci,tfine);
 
 imax = find(abs(diff(Ci)./diff(t)) > 1e-8,1) - 1;
 imin = find(abs(diff(Ci)./diff(t)) > 1e-8, 1, 'last' );
@@ -66,6 +63,8 @@ if imax < 5
     imax = 10;
 end
 
+% imin = length(t);
+% imax = 3;
 tvmin = t(imin);
 Pvmin = abs(Ci(imin)/c0);
 tvmax = t(imax);
@@ -90,7 +89,7 @@ P = P/max(P);
 P = P/sum(P);
 Nv = length(P);
 stp = fix(length(t)/7);
-Cmat = produce_data(P',vs,t(1:stp:end),z)';
+Cmat = produce_data(P',vs*0.5*0.9,t(1:stp:end),z)';
 Ctest = C_t_z(:,1:stp:end);
 err(lmnop) = 1/length(Cmat(:))*sum((Cmat(:)-Ctest(:)).^2);
 
@@ -103,7 +102,7 @@ R = rand; G = rand; B = rand;
 plot(Cmat(:,col),z,'-+','color',[R,G,B]); 
 plot(Ctest(:,col),z,'--','color',[R,G,B]);
 end
-title('Concentration profiles')
+title(['Concentration profiles z1 = ' num2str(z1)])
 xlim([0 1.1]); ylim([min(z),max(z)])
 xlabel('C [g/L]'); ylabel('z')
 

@@ -1,4 +1,4 @@
-clear; %close all; tic
+clear; close all; tic
 addpath('./Toolboxes')
 
 pltC = 1; %display the concentration profiles
@@ -6,12 +6,9 @@ pltP = 1; % display the PVDs
 pltE = 1; % display the 
 No = 1000;
 
-in = './exp_data/photo2.7.13.mat';
+in = './exp_data/photo1.7.13.mat';
 % in = './Raphael/created_data/data_set_41.mat';
 dat = importdata(in);
-
-% step 1 normalise the data ????
-% dat.C = dat.C-min(dat.C(:,end)); ????
 
 try
     vmax = dat.v(end);
@@ -24,8 +21,9 @@ end
 
 
 zz1 = [0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.95,0.98];
-% zz1 = 0.3
-c0 = 1; % mean(C_t_z(:,1));
+%zz1 = 0.3
+%c0 = 1; 
+c0 = mean(C_t_z(:,1));
 
 for lmnop = 1:length(zz1)
 z1 = zz1(lmnop);
@@ -46,8 +44,8 @@ Ci = wdenoise(Ci,8);
 Ci = movmean(Ci,3);
 order = 3; frame = 15;
 Ci = sgolayfilt(Ci,order,frame);
-tfine = linspace(0,t(end),4000);
-Ci_fine = interp1(t,Ci,tfine);
+% tfine = linspace(0,t(end),4000);
+% Ci_fine = interp1(t,Ci,tfine);
 
 imax = find(abs(diff(Ci)./diff(t)) > 1e-8,1) - 1;
 imin = find(abs(diff(Ci)./diff(t)) > 1e-8, 1, 'last' );
@@ -66,10 +64,12 @@ if imax < 5
     imax = 10;
 end
 
+% imin = length(t);
+% imax = 3;
 tvmin = t(imin);
 Pvmin = abs(Ci(imin)/c0);
 tvmax = t(imax);
-Pvmax = 1-abs(Ci(imax)/c0);
+Pvmax = abs(Ci(imax)/c0);
 
 solve.t =t;
 solve.z = z;

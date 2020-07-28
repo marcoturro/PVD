@@ -1,0 +1,20 @@
+clear all;
+close all;
+
+dat = importdata('dat.mat');
+
+addpath('
+
+t = dat.t;
+z = dat.z;
+C_t_z = dat.C;
+
+z0 = 0.1;
+z1 = 0.8;
+
+figure
+plot(C_t_z,z);
+vmin = 1e-6;
+vmax = 1e-3;
+[vi,Pi] = PVD_direct_solve(t,z,C_t_z,z0,z1,vmin,vmax)
+

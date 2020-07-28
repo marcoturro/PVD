@@ -30,7 +30,6 @@ ddtCi = my_2FD_non_uniform(ti,Ci);
 C0 = Ci(1)/(z0-z1);
 
 Pvmin = Ci(1)/(z0-z1)/C0/vmin;
-
 N = length(vi);
 
 A = full(gallery('tridiag',N,-a^(-2),1,0));
@@ -40,8 +39,8 @@ rhs(1) = Pvmin ;
 P = linsolve(A,rhs);
 Pi = P;
 dvi = [vmin diff(vi)]';
-figure
-plot(diff(vi));
+% figure
+% plot(diff(vi));
 vi(1) = 0;
 Pi = P.*dvi;
 Pi = Pi/sum(Pi);

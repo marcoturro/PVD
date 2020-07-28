@@ -6,21 +6,21 @@ dat = importdata('photo1.7.13.mat');
 t = dat.t;
 z = dat.z;
 C_t_z = dat.C;
-zact = -0.025;
+zact = -0.02;
 [~,izact] = min(abs(zact-z));
 z = z(izact:end)-zact;
 C_t_z = C_t_z(izact:end,:);
 
 
-z0 = 0.02;
-z1 = 0.019;
+z0 = 0.05;
+z1 = 0.045;
 
 
-vmax = 1e-4;
+vmax = 1e-1;
 [vi,Pi] = PVD_direct_solve(t,z,C_t_z,z0,z1,vmax);
 
 figure
-bar(vi,Pi);
+bar(log(vi),Pi);
 ylabel('Pi');
 
 

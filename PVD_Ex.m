@@ -1,59 +1,47 @@
 clear
 close all;
 
-PVD_fig = figure;
-Prof_fig = figure;
-in = ['./Raphael/created_data/data_set_31.mat']
+in = './exp_data/Marco05.7.7.20.mat'
 dat = importdata(in);
-dat.z = dat.z;
 addpath('./Toolboxes')
-plt = 1; 
-vmax = 3.81;
+plt = 0; 
 
 t = dat.t;
+t = t+10
 [~, id_z0] = min(abs(dat.z));
 z = dat.z(id_z0:end);
-
-if length(dat.C(:,1)) ~= length(z)
-    Cz = dat.C';
-    C_t_z = Cz(id_z0:end,:);
-else
-    C_t_z = dat.C(id_z0:end,:);
-end
+C_t_z = dat.C(id_z0:end,:);
 
 C_t_z = C_t_z - min(min(C_t_z));
  
 for i = 1:length(t)
-    id_zM = 60;
+    id_zM = 10;
     C_t_z(1:id_zM,i) = interp1([0 z(id_zM)],[0 C_t_z(id_zM+1,i)],z(1:id_zM));
 end
 
 c0 = mean(C_t_z(:,1));
 ci = @(ci0,vs,z,t)(ci0*(1-heaviside(z+vs*t)));
 
-z0 = 0.8;
-zz1 = z0*0.9
-
-
+for z0 = 0.005:0.01:0.1
+zz1 = linspace(z0/100,z0*0.98,10);
 clear Ps vs
 for lopt = 1:length(zz1)
 z1 = zz1(lopt)
 
-[vi,Pi,pi] = PVD_direct_solve(t,z,C_t_z,z0,z1,vmax,c0);
+
+vmax = 1e-1;
+[vi,Pi,pi] = PVD_direct_solve(t,z,C_t_z,z0,z1,vmax);
 
 if plt == 1
-    
-    figure(PVD_fig)
-    hold on
-    bar(log(vi),Pi,'FaceAlpha',0.3,'EdgeColor','none','DisplayName',['z1 = ' num2str(z1)]);
+    figure
+    bar(log(vi),Pi);
     ylabel('Pi');
-    hold on
 
 
     tplt = logspace(log10(t(2)),log10(t(end)),10);
 
 
-    figure(Prof_fig)
+    figure
     C = zeros(length(z),length(t));
     cnt = 0;
     col = lines(100);
@@ -62,6 +50,7 @@ if plt == 1
         [~,itp] = min(abs(tplt(k)-t));
         tp = t(itp);
         cnt = cnt+1;
+        %t(k)/t(end)*100
         Ci = 0;
         for i = 1:length(Pi)
             Ci = ci(c0*Pi(i),vi(i),z,tp) + Ci;
@@ -72,28 +61,29 @@ if plt == 1
     end
 end
 
+
 vi_z{lopt} = vi;
 Pi_z{lopt} = pi;
 
 
 end
 
-vref = vi_z{lopt};
 
+
+vref = vi_z{lopt}
 for jj = 1:lopt
     Ps(jj,:) = interp1(vi_z{jj},Pi_z{jj},vref,'pchip');
 end
 
-Ptot = mean(Ps,1);
+Ptot = mean(Ps,1)/lopt;
 Ptot = Ptot.*[vref(1) diff(vref)];
-Ptot = Ptot/sum(Ptot);
+Ptot = Ptot/sum(Ptot)
 
+figure(2)
 hold on
-figure
 bar(log(vref),Ptot,'FaceAlpha',0.3,'DisplayName',['z0 = ' num2str(z0)]);
 hold off
 ylabel('Pi');
-
 
 tplt = logspace(log10(t(2)),log10(t(end)),10);
 
@@ -101,7 +91,6 @@ figure
 C = zeros(length(z),length(t));
 cnt = 0;
 col = lines(100);
-
 for k = 1:length(tplt)
     
     [~,itp] = min(abs(tplt(k)-t));
@@ -116,4 +105,5 @@ for k = 1:length(tplt)
     plot(Ci,z,'color',col(cnt,:)); hold on;
     plot(C_t_z(:,itp),z,'--','color',col(cnt,:));
 end
-
+end
+legend show

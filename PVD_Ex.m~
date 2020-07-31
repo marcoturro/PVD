@@ -1,25 +1,16 @@
 clear
 close all;
 
-PVD_fig = figure;
-Prof_fig = figure;
-in = ['./Raphael/created_data/data_set_31.mat']
+in = './exp_data/Marco05.1.7.20.mat'
 dat = importdata(in);
-dat.z = dat.z;
+dat.z = dat.z
 addpath('./Toolboxes')
 plt = 1; 
-vmax = 3.81;
 
 t = dat.t;
 [~, id_z0] = min(abs(dat.z));
 z = dat.z(id_z0:end);
-
-if length(dat.C(:,1)) ~= length(z)
-    Cz = dat.C';
-    C_t_z = Cz(id_z0:end,:);
-else
-    C_t_z = dat.C(id_z0:end,:);
-end
+C_t_z = dat.C(id_z0:end,:);
 
 C_t_z = C_t_z - min(min(C_t_z));
  
@@ -31,19 +22,18 @@ end
 c0 = mean(C_t_z(:,1));
 ci = @(ci0,vs,z,t)(ci0*(1-heaviside(z+vs*t)));
 
+f = figure
 z0 = 0.8;
-zz1 = z0*0.9
-
-
+zz1 = z0*0.99% linspace(0.01,z0*0.99,10);
 clear Ps vs
 for lopt = 1:length(zz1)
 z1 = zz1(lopt)
 
+vmax = 1e-1;
 [vi,Pi,pi] = PVD_direct_solve(t,z,C_t_z,z0,z1,vmax,c0);
 
 if plt == 1
-    
-    figure(PVD_fig)
+    figure
     hold on
     bar(log(vi),Pi,'FaceAlpha',0.3,'EdgeColor','none','DisplayName',['z1 = ' num2str(z1)]);
     ylabel('Pi');
@@ -53,7 +43,7 @@ if plt == 1
     tplt = logspace(log10(t(2)),log10(t(end)),10);
 
 
-    figure(Prof_fig)
+    figure
     C = zeros(length(z),length(t));
     cnt = 0;
     col = lines(100);
@@ -117,3 +107,6 @@ for k = 1:length(tplt)
     plot(C_t_z(:,itp),z,'--','color',col(cnt,:));
 end
 
+
+figure(f)
+legend show

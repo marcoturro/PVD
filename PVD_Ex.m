@@ -8,7 +8,7 @@ dat = importdata(in);
 dat.z = dat.z;
 addpath('./Toolboxes')
 plt = 1; 
-vmax = 3.81;
+vmax = 1e-1;
 
 t = dat.t;
 [~, id_z0] = min(abs(dat.z));

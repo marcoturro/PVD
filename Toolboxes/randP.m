@@ -8,40 +8,14 @@ function [x01, p] = randP(refinement)
 % The term used for the initial EV distribution are hand tuned to be
 % similar to known PSD taken from GILLARD () and from known sediment
 % analysis of CCFZ samples
-%
-close all
-x01 = linspace(0,1,refinement);
-xpdf = linspace(-35,15,refinement);
-muev = 1; bev = 2;
-p = evpdf(xpdf,muev,bev);
-p = p/sum(p);
-ran = zeros(1,50); vals = [-28 -30 -19 -2 -12 -16 -1 0 -3 -10 1 4 9 5 8];
-for i = 1:50
-ran(i) = vals(randi(numel(vals)));
+p = zeros(1,refinement);
+xpdf = [0 logspace(0,2,refinement-1)/10^2];
+for i = 0:randi([100 200],1)
+    mui = xpdf(randi([1 refinement],1))
+    sigi = rand/10;
+    pi = normpdf(xpdf,mui,sigi);
+    p = p + pi/sum(pi);
 end
+p(1) = 0;
 
-%figure('units','normalized','outerposition',[0 0 1 1])
-
-for r = 2:randi([5 10])
-    munorm(r) = ran(randi(numel(ran)));
-    if munorm(r) == munorm(r-1)
-        munorm(r) = ran(randi(numel(ran)));
-    end
-    if munorm(r) == munorm(r-1)
-        munorm(r) = ran(randi(numel(ran)));
-    end
-    if munorm(r) < -8
-        signorm = (3-1.5)*rand(1) + 1;
-        ptmp =  normpdf(xpdf,muev+munorm(r),signorm)/(randi([2 5]));
-    else
-        signorm = (1-0.5)*rand(1) + 1;
-        ptmp = normpdf(xpdf,muev+munorm(r),signorm);
-    end
-    p = p + ptmp;
-end
-p = movmean(p,ceil(refinement/30));
-%p = interp1(xpdf,p,x01)
-p = p/sum(p);
-
-% plot(xpdf,p)
 end

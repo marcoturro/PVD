@@ -36,7 +36,7 @@ rhs = z0/C0*(ddtCi./vi.^3)' ;
 
 rhs(1) = Pvmin ;
 pi = linsolve(A,rhs) ;
-%pi(pi<0)= 0;
+% pi(pi<0)= 0;
 dvi = [vmin diff(vi)]' ;
 
 vi(1) = 0 ;

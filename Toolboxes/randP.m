@@ -1,4 +1,5 @@
-function [x01, p] = randP(refinement)
+
+function [xpdf, p] = randP(refinement)
 %%
 % Input the refinement of the PVD and output a PVD made out of 3 to 4
 % peeks defined by the random term "r" in the loop and by an initial GUMMEL
@@ -8,14 +9,26 @@ function [x01, p] = randP(refinement)
 % The term used for the initial EV distribution are hand tuned to be
 % similar to known PSD taken from GILLARD () and from known sediment
 % analysis of CCFZ samples
-p = zeros(1,refinement);
-xpdf = [0 logspace(0,2,refinement-1)/10^2];
-for i = 0:randi([100 200],1)
-    mui = xpdf(randi([1 refinement],1))
-    sigi = rand/10;
+ 
+s1 = logspace(0,3,refinement*0.4-1)/10^3*0.005; 
+s2 = logspace(0,3,refinement*0.5)/10^3;
+[~, id] = min(abs(s2-s1(end)));
+xpdf = [0 s1 s2(id+ceil(refinement/randi([50 70])):end)];
+p = zeros(1,length(xpdf));
+ 
+for i = 0:randi([20 50],1)
+    mui = xpdf(randi([20 length(xpdf)],1));   
+    sigi = randi([200 700])/100000;
     pi = normpdf(xpdf,mui,sigi);
-    p = p + pi/sum(pi);
+    p = p + pi;
+    plot(xpdf,pi)
+    hold on
 end
+figure
 p(1) = 0;
-
+p = p/sum(p);
+bar(log(xpdf),p,'FaceAlpha',0.3,'EdgeColor','none');
+hold on
+ 
+ 
 end

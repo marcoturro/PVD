@@ -1,17 +1,19 @@
 close all
 clear
 addpath('./Toolboxes')
+ 
 
-
-sets = 3001:5000;
+sets = 1:20;
 
 tic
 for s = sets
    clearvars -except s sets
 %%
-[vad, Pv] = randP(randi([90 140],1)); 
-vs = linspace(0,0.000005*randi([20,30],1),length(vad)+1); % for realism
+ref = randi([500 550],1);
+[vad, Pv] = randP(ref); 
+vs = linspace(0,0.0005*randi([20,30],1),length(vad)+1); % for realism
 vs = vs(2:end);
+vs = vad*0.5
 
 c0tot = 0.5;
 t = linspace(0,randi([8000 10000],1),randi([1000 1200],1)); %to be twitched
@@ -62,9 +64,9 @@ fileID_Cdata= ['./Marco/created_data/data_set_' num2str(s) '.mat'];
 dat = struct('C',C,'t',t,'z',z,'P',Pv,'v',vs);
 save(fileID_Cdata,'dat')
 
-fileID_Cdata= ['../ML_TRAINING_DATA/ML_MT/Noisy_b2/data_set_' num2str(s) '.mat'];
-dat = struct('C',Cn,'t',t,'z',z,'P',Pv,'v',vs);
-save(fileID_Cdata,'dat')
+% fileID_Cdata= ['../ML_TRAINING_DATA/ML_MT/Noisy_b2/data_set_' num2str(s) '.mat'];
+% dat = struct('C',Cn,'t',t,'z',z,'P',Pv,'v',vs);
+% save(fileID_Cdata,'dat')
 
 sprintf([num2str(s) ' out of ' num2str(sets(end))])
 

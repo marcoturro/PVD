@@ -1,9 +1,9 @@
 clear
-close all;
+% close all;
 
 PVD_fig = figure;
 Prof_fig = figure;
-in = ['./Raphael/created_data/data_set_31.mat']
+in = ['./exp_data/Marco01.1.8.3.mat']
 dat = importdata(in);
 dat.z = dat.z;
 addpath('./Toolboxes')
@@ -21,7 +21,7 @@ else
     C_t_z = dat.C(id_z0:end,:);
 end
 
-C_t_z = C_t_z - min(min(C_t_z));
+C_t_z = C_t_z - min(min(C_t_z))+0.03;
  
 for i = 1:length(t)
     id_zM = 60;
@@ -31,7 +31,7 @@ end
 c0 = mean(C_t_z(:,1));
 ci = @(ci0,vs,z,t)(ci0*(1-heaviside(z+vs*t)));
 
-z0 = 0.8;
+z0 = 0.08;
 zz1 = z0*0.9
 
 

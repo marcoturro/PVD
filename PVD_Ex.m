@@ -3,7 +3,7 @@ close all;
 
 PVD_fig = figure;
 Prof_fig = figure;
-in = ['./exp_data/Marco01.2.8.4.mat']
+in = ['./exp_data/05_rotated.mat']
 dat = importdata(in);
 dat.z = dat.z;
 addpath('./Toolboxes')
@@ -14,15 +14,16 @@ t = dat.t;
 [~, id_z0] = min(abs(dat.z));
 z = dat.z(id_z0:end);
 
-if length(dat.C(:,1)) ~= length(z)
+if length(dat.C(1,:)) ~= length(t)
     Cz = dat.C';
     C_t_z = Cz(id_z0:end,:);
 else
     C_t_z = dat.C(id_z0:end,:);
 end
 
-C_t_z = C_t_z - min(min(C_t_z))+0.03;
- 
+C_t_z = C_t_z(1:end,:) - min(min(C_t_z));
+
+
 for i = 1:length(t)
     id_zM = 60;
     C_t_z(1:id_zM,i) = interp1([0 z(id_zM)],[0 C_t_z(id_zM+1,i)],z(1:id_zM));
@@ -31,8 +32,8 @@ end
 c0 = mean(C_t_z(:,1));
 ci = @(ci0,vs,z,t)(ci0*(1-heaviside(z+vs*t)));
 
-z0 = 0.08;
-zz1 = z0*0.9
+z0 = 0.06;
+zz1 = z0*0.98
 
 
 clear Ps vs

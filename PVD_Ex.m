@@ -1,14 +1,14 @@
 clear
-close all;
+% close all;
 
 PVD_fig = figure;
 Prof_fig = figure;
-in = ['./exp_data/05_rotated.mat']
+in = ['./exp_data/05_sat_180.mat']
 dat = importdata(in);
 dat.z = dat.z;
 addpath('./Toolboxes')
 plt = 1; 
-vmax = 1e-1;
+vmax = 0.5e-1;
 
 t = dat.t;
 [~, id_z0] = min(abs(dat.z));
@@ -78,43 +78,43 @@ Pi_z{lopt} = pi;
 
 
 end
-
-vref = vi_z{lopt};
-
-for jj = 1:lopt
-    Ps(jj,:) = interp1(vi_z{jj},Pi_z{jj},vref,'pchip');
-end
-
-Ptot = mean(Ps,1);
-Ptot = Ptot.*[vref(1) diff(vref)];
-Ptot = Ptot/sum(Ptot);
-
-hold on
-figure
-bar(log(vref),Ptot,'FaceAlpha',0.3,'DisplayName',['z0 = ' num2str(z0)]);
-hold off
-ylabel('Pi');
-
-
-tplt = logspace(log10(t(2)),log10(t(end)),10);
-
-figure
-C = zeros(length(z),length(t));
-cnt = 0;
-col = lines(100);
-
-for k = 1:length(tplt)
-    
-    [~,itp] = min(abs(tplt(k)-t));
-    tp = t(itp);
-    cnt = cnt+1;
-    %t(k)/t(end)*100
-    Ci = 0;
-    for i = 1:length(Ptot)
-        Ci = ci(c0*Ptot(i),vref(i),z,tp) + Ci;
-    end
-    
-    plot(Ci,z,'color',col(cnt,:)); hold on;
-    plot(C_t_z(:,itp),z,'--','color',col(cnt,:));
-end
-
+% 
+% vref = vi_z{lopt};
+% 
+% for jj = 1:lopt
+%     Ps(jj,:) = interp1(vi_z{jj},Pi_z{jj},vref,'pchip');
+% end
+% 
+% Ptot = mean(Ps,1);
+% Ptot = Ptot.*[vref(1) diff(vref)];
+% Ptot = Ptot/sum(Ptot);
+% 
+% hold on
+% figure
+% bar(log(vref),Ptot,'FaceAlpha',0.3,'DisplayName',['z0 = ' num2str(z0)]);
+% hold off
+% ylabel('Pi');
+% 
+% 
+% tplt = logspace(log10(t(2)),log10(t(end)),10);
+% 
+% figure
+% C = zeros(length(z),length(t));
+% cnt = 0;
+% col = lines(100);
+% 
+% for k = 1:length(tplt)
+%     
+%     [~,itp] = min(abs(tplt(k)-t));
+%     tp = t(itp);
+%     cnt = cnt+1;
+%     %t(k)/t(end)*100
+%     Ci = 0;
+%     for i = 1:length(Ptot)
+%         Ci = ci(c0*Ptot(i),vref(i),z,tp) + Ci;
+%     end
+%     
+%     plot(Ci,z,'color',col(cnt,:)); hold on;
+%     plot(C_t_z(:,itp),z,'--','color',col(cnt,:));
+% end
+% 

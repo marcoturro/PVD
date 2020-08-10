@@ -3,20 +3,18 @@ clear
 
 dict = {'Bottle1-1'};
 dict = {'Marco05.1.7.20','Marco05.2.7.20','Marco05.3.7.20','Marco05.4.7.20','Marco05.6.7.20','Marco05.7.7.20'};
-dict = {'05_sat_180'}; 
-% dict = {'05_sat_135'};
-% dict = {'Marco05.7.7.20'};
+dict = {'05_sat_180','05_sat_240'}; 
+dict = {'Marco05.3.7.20','Marco05.4.7.20'};
 folder = './exp_data/';
 
-%figure; 
-subplot(1,3,3); hold on
+figure; subplot(1,2,1); hold on
 col = lines(length(dict))
 all_marks = {'o','+','*','.','x','s','d','^','v','>','<','p','h'};
 
 for i = 1:length(dict)
     load([folder dict{i} '.mat']);
 
-    plot(dat.Imean_i(1:20:end,1:24),dat.z(1:20:end),'color',col(i,:)) %,'Marker',all_marks{i})
+    plot(dat.Imean_i(160:20:end,1:6),dat.z(160:20:end),'color',col(i,:)) %,'Marker',all_marks{i})
     Io(i) = dat.I0;
     I1(i) = mean(dat.Imean(:,3));
 end

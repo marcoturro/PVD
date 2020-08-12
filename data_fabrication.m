@@ -3,7 +3,7 @@ clear
 addpath('./Toolboxes')
  
 
-sets = 2:2;
+sets = 1:1;
 
 tic
 for s = sets
@@ -62,7 +62,7 @@ end
 
 %%
 fileID_Cdata= ['./Marco/created_data/data_set_' num2str(s) '.mat'];
-dat = struct('C',Cn,'t',t,'z',z,'P',Pv,'v',vs);
+dat = struct('C',C,'t',t,'z',z,'P',Pv,'v',vs);
 save(fileID_Cdata,'dat')
 
 % fileID_Cdata= ['../ML_TRAINING_DATA/ML_MT/Noisy_b2/data_set_' num2str(s) '.mat'];

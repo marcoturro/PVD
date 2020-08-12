@@ -1,4 +1,4 @@
-function [vi,Pi,pi] = PVD_direct_solve(t,z,C_t_z,z0,z1,vmax,c0)
+function [vi,Pi,pi] = PVD_direct_solve(t,z,C_t_z,z0,z1,vmax)
 
 a = z0/z1 ;
 vmin = z0/t(end) ;
@@ -21,6 +21,9 @@ end
 
 ti = z0./vi ;
 Ci = interp1(t,C,ti,'pchip') ;
+order = 3;
+framelen = 11;
+Ci = sgolayfilt(Ci,order,framelen);
 ddtCi = my_2FD_non_uniform(ti,Ci) ;
 
 C0 = Ci(1)/(z0-z1) ;

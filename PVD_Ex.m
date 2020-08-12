@@ -3,8 +3,8 @@ clear
 
 PVD_fig = figure;
 Prof_fig = figure;
-in = ['./exp_data/05_sat_240.mat']
-in = './Marco/created_data/data_set_2.mat'
+in = ['./exp_data/grid_05_2.mat']
+% in = './Marco/created_data/data_set_2.mat'
 dat = importdata(in);
 dat.z = dat.z;
 addpath('./Toolboxes')
@@ -12,19 +12,19 @@ plt = 1;
 mPvd = 1;
 vmax = 0.5e-1;
 
-t = dat.t;
+t = dat.t+5;
 [~, id_z0] = min(abs(dat.z));
-z = dat.z(id_z0:end-200);
+z = dat.z(id_z0:end);
 
 if length(dat.C(1,:)) ~= length(t)
     Cz = dat.C';
     C_t_z = Cz(id_z0:end,:);
 else
-    C_t_z = dat.C(id_z0:end-200,:);
+    C_t_z = dat.C(id_z0:end,:);
 end
 
 C_t_z = C_t_z(1:end,:) - min(min(C_t_z));
-
+C_t_z = wdenoise(C_t_z,4);
 
 for i = 1:length(t)
     id_zM = 60;
@@ -35,7 +35,7 @@ c0 = mean(C_t_z(:,1));
 ci = @(ci0,vs,z,t)(ci0*(1-heaviside(z+vs*t)));
 
 zz0 = 0.02:0.001:0.09;
-zz0 = 0.05;
+zz0 = 0.08;
 
 clear Ps vs
 
@@ -43,7 +43,7 @@ for lopt = 1:length(zz0)
 z0 = zz0(lopt);
 z1 = z0*0.99;
 
-[vi,Pi,pi] = PVD_direct_solve(t,z,C_t_z,z0,z1,vmax,c0);
+[vi,Pi,pi] = PVD_direct_solve(t,z,C_t_z,z0,z1,vmax);
     
 %     figure(PVD_fig)
 %     hold on

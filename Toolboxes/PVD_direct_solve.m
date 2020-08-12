@@ -20,7 +20,6 @@ for i = 1:length(t)
 end
 
 ti = z0./vi ;
-
 Ci = interp1(t,C,ti,'pchip') ;
 ddtCi = my_2FD_non_uniform(ti,Ci) ;
 
@@ -36,7 +35,7 @@ rhs = z0/C0*(ddtCi./vi.^3)' ;
 
 rhs(1) = Pvmin ;
 pi = linsolve(A,rhs) ;
-% pi(pi<0)= 0;
+pi(pi<0)= 0;
 dvi = [vmin diff(vi)]' ;
 
 vi(1) = 0 ;

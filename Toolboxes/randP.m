@@ -13,22 +13,22 @@ function [xpdf, p] = randP(refinement)
 s1 = logspace(0,3,refinement*0.4-1)/10^3*0.005; 
 s2 = logspace(0,3,refinement*0.5)/10^3;
 [~, id] = min(abs(s2-s1(end)));
-xpdf = [0 s1 s2(id+ceil(refinement/randi([50 70])):end)];
+xpdf = [0 s1 s2(id+1:end)];
 p = zeros(1,length(xpdf));
  
 for i = 0:randi([20 50],1)
-    mui = xpdf(randi([20 length(xpdf)],1));   
+    mui = xpdf(randi([floor(refinement/2) length(xpdf)],1));   
     sigi = randi([200 700])/100000;
     pi = normpdf(xpdf,mui,sigi);
     p = p + pi;
-    plot(xpdf,pi)
-    hold on
+
 end
-figure
+
 p(1) = 0;
 p = p/sum(p);
-bar(log(xpdf),p,'FaceAlpha',0.3,'EdgeColor','none');
-hold on
+% figure
+% bar(log(xpdf),p,'FaceAlpha',0.3,'EdgeColor','none');
+% hold on
  
  
 end

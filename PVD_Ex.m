@@ -1,10 +1,10 @@
 clear
 % close all;
 
-PVD_fig = figure;
+PVD_fig= figure;
 Prof_fig = figure;
-in = ['./exp_data/grid_05_2.mat']
-% in = './Marco/created_data/data_set_2.mat'
+in = ['./exp_data/SiCF500_05.2.8.14.mat']
+in = './Marco/created_data/data_set_1.mat'
 dat = importdata(in);
 dat.z = dat.z;
 addpath('./Toolboxes')
@@ -12,7 +12,7 @@ plt = 1;
 mPvd = 1;
 vmax = 0.5e-1;
 
-t = dat.t+5;
+t = dat.t;
 [~, id_z0] = min(abs(dat.z));
 z = dat.z(id_z0:end);
 
@@ -24,18 +24,19 @@ else
 end
 
 C_t_z = C_t_z(1:end,:) - min(min(C_t_z));
+C_t_z_or = C_t_z;
 C_t_z = wdenoise(C_t_z,4);
 
 for i = 1:length(t)
-    id_zM = 60;
+    id_zM = 20;
     C_t_z(1:id_zM,i) = interp1([0 z(id_zM)],[0 C_t_z(id_zM+1,i)],z(1:id_zM));
 end
 
-c0 = mean(C_t_z(:,1));
+c0 = mean(C_t_z(200:end-200,1));
 ci = @(ci0,vs,z,t)(ci0*(1-heaviside(z+vs*t)));
 
 zz0 = 0.02:0.001:0.09;
-zz0 = 0.08;
+zz0 = 0.06;
 
 clear Ps vs
 
@@ -70,8 +71,11 @@ z1 = z0*0.99;
         end
 
         plot(Ci,z,'color',[col(cnt,:) 0.1]); hold on;
-        plot(C_t_z(:,itp),z,'--','color',col(cnt,:));
+        plot(C_t_z_or(:,itp),z,'--','color',col(cnt,:));
     end
+    xlabel('C [g/L]');
+    ylabel('z [m]');
+    set(gca,'FontSize',14);
 
 
 vi_z{lopt} = vi;
@@ -91,11 +95,17 @@ Ptot = mean(Ps,1);
 Ptot = Ptot.*[vref(1) diff(vref)];
 Ptot = Ptot/sum(Ptot);
 
-hold on
-figure
+figure(PVD_fig)
 bar(log(vref),Ptot,'FaceAlpha',0.3,'DisplayName',['z0 = ' num2str(z0)]);
+try    
+    hold on
+    bar(log(dat.v),dat.P,'FaceAlpha',0.3,'DisplayName',['z0 = ' num2str(z0)]);
+catch
+end
 hold off
 ylabel('Pi');
+xlabel('log(v) [m/s]');
+set(gca,'FontSize',14);
 
 
 tplt = logspace(log10(t(2)),log10(t(end)),10);
@@ -117,7 +127,7 @@ for k = 1:length(tplt)
     end
     
     plot(Ci,z,'color',col(cnt,:)); hold on;
-    plot(C_t_z(:,itp),z,'--','color',col(cnt,:));
+    plot(C_t_z_or(:,itp),z,'--','color',col(cnt,:));
 end
 
 end

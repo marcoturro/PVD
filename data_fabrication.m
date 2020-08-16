@@ -14,7 +14,7 @@ ref = randi([500 550],1);
 vs = linspace(0,0.0005*randi([20,30],1),length(vad)+1); % for realism
 vs = vs(2:end);
 vmax = randi([9 50])/1000;
-vs = vad*vmax
+vs = vad*vmax;
 
 c0tot = randi([1 5],1)/10;
 t = linspace(0,randi([8000 10000],1),randi([1000 1200],1)); %to be twitched

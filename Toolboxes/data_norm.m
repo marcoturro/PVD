@@ -15,7 +15,7 @@ if length(C(:,1)) ~= length(z)
     C = C';
 end
 
-C = wdenoise(C,8);
+C = wdenoise(C,6);
 C_zi = zeros(sizeZ,length(t));
 zad = linspace(0,z(end),sizeZ);
 
@@ -48,7 +48,7 @@ try
     v = data.v;
     P = data.P;
     v = v/vmax;
-    P = interp1([0 v],[0 P],linspace(0,1,100));
+    P = interp1([v],[P],linspace(0,1,100));
     v = linspace(0,1,100);
     P = P/max(data.P);
 catch

@@ -26,9 +26,11 @@ end
 
 p(1) = 0;
 p = p/sum(p);
+P = p.*[xpdf(1) diff(xpdf)];
+P = P/sum(P);
 % figure
-% bar(log(xpdf),p,'FaceAlpha',0.3,'EdgeColor','none');
+% bar(log(xpdf*0.01),p,'FaceAlpha',0.3,'EdgeColor','none');
 % hold on
- 
+%  
  
 end

@@ -8,11 +8,12 @@ Isize = 100
 m = Isize + kernel + 2*Pad
 n = Isize + 2*Pad
 type = 'linear'
-Data_Pool = '../ML_TRAINING_DATA/ML_RO'
-Save = '../ML_TRAINING_DATA/ML_Preprocessed_CNN_time_norm/test_set_collab';
+Data_Pool = './Marco/created_data/'
+Save = './Marco';
 
-for DatN = 9001:10000
-    
+for DatN = 1:10
+DatN
+
 load([Data_Pool '/data_set_' num2str(DatN) '.mat'])
 
 try
@@ -37,5 +38,5 @@ end
 
 dat = rmfield(dat,'C');
 dat.C = C;
-save([Save '/data_set_' num2str(DatN-8000) '.mat'],'dat')
+save([Save '/data_set_' num2str(DatN) '.mat'],'dat')
 end

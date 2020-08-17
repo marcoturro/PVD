@@ -1,10 +1,8 @@
 clear
 % close all;
 
-PVD_fig= figure;
-Prof_fig = figure;
-in = ['./exp_data/SiCF500_05.2.8.14.mat']
-in = './Marco/created_data/data_set_1.mat'
+in = ['./exp_data/SiCF1000_05.2.8.14.mat']
+% in = './Marco/created_data/data_set_1.mat'
 dat = importdata(in);
 dat.z = dat.z;
 addpath('./Toolboxes')
@@ -46,36 +44,31 @@ z1 = z0*0.99;
 
 [vi,Pi,pi] = PVD_direct_solve(t,z,C_t_z,z0,z1,vmax);
     
-%     figure(PVD_fig)
-%     hold on
-%     bar(log(vi),Pi,'FaceAlpha',0.3,'EdgeColor','none','DisplayName',['z1 = ' num2str(z1)]);
-%     ylabel('Pi');
-%     hold on
 
 
     tplt = logspace(log10(t(2)),log10(t(end)),10);
 
 
-    figure(Prof_fig)
+%     Prof_fig = figure
     C = zeros(length(z),length(t));
     cnt = 0;
     col = lines(100);
-    for k = 1:length(tplt)
-
-        [~,itp] = min(abs(tplt(k)-t));
-        tp = t(itp);
-        cnt = cnt+1;
-        Ci = 0;
-        for i = 1:length(Pi)
-            Ci = ci(c0*Pi(i),vi(i),z,tp) + Ci;
-        end
-
-        plot(Ci,z,'color',[col(cnt,:) 0.1]); hold on;
-        plot(C_t_z_or(:,itp),z,'--','color',col(cnt,:));
-    end
-    xlabel('C [g/L]');
-    ylabel('z [m]');
-    set(gca,'FontSize',14);
+%     for k = 1:length(tplt)
+% 
+%         [~,itp] = min(abs(tplt(k)-t));
+%         tp = t(itp);
+%         cnt = cnt+1;
+%         Ci = 0;
+%         for i = 1:length(Pi)
+%             Ci = ci(c0*Pi(i),vi(i),z,tp) + Ci;
+%         end
+% 
+%         plot(Ci,z,'color',[col(cnt,:) 0.1]); hold on;
+%         plot(C_t_z_or(:,itp),z,'--','color',col(cnt,:));
+%     end
+%     xlabel('C [g/L]');
+%     ylabel('z [m]');
+%     set(gca,'FontSize',14);
 
 
 vi_z{lopt} = vi;
@@ -95,14 +88,8 @@ Ptot = mean(Ps,1);
 Ptot = Ptot.*[vref(1) diff(vref)];
 Ptot = Ptot/sum(Ptot);
 
-figure(PVD_fig)
-bar(log(vref),Ptot,'FaceAlpha',0.3,'DisplayName',['z0 = ' num2str(z0)]);
-try    
-    hold on
-    bar(log(dat.v),dat.P,'FaceAlpha',0.3,'DisplayName',['z0 = ' num2str(z0)]);
-catch
-end
-hold off
+PVD_fig = figure;
+bar(log(vref),Ptot,'Facecolor',[0 0.3 1],'FaceAlpha',0.3,'DisplayName',['z0 = ' num2str(z0)]);
 ylabel('Pi');
 xlabel('log(v) [m/s]');
 set(gca,'FontSize',14);
@@ -110,24 +97,24 @@ set(gca,'FontSize',14);
 
 tplt = logspace(log10(t(2)),log10(t(end)),10);
 
-figure(Prof_fig)
+% figure(Prof_fig)
 C = zeros(length(z),length(t));
 cnt = 0;
 col = lines(100);
 
-for k = 1:length(tplt)
-    
-    [~,itp] = min(abs(tplt(k)-t));
-    tp = t(itp);
-    cnt = cnt+1;
-    %t(k)/t(end)*100
-    Ci = 0;
-    for i = 1:length(Ptot)
-        Ci = ci(c0*Ptot(i),vref(i),z,tp) + Ci;
-    end
-    
-    plot(Ci,z,'color',col(cnt,:)); hold on;
-    plot(C_t_z_or(:,itp),z,'--','color',col(cnt,:));
-end
+% for k = 1:length(tplt)
+%     
+%     [~,itp] = min(abs(tplt(k)-t));
+%     tp = t(itp);
+%     cnt = cnt+1;
+%     %t(k)/t(end)*100
+%     Ci = 0;
+%     for i = 1:length(Ptot)
+%         Ci = ci(c0*Ptot(i),vref(i),z,tp) + Ci;
+%     end
+%     
+%     plot(Ci,z,'color',col(cnt,:)); hold on;
+%     plot(C_t_z_or(:,itp),z,'--','color',col(cnt,:));
+% end
 
 end

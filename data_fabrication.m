@@ -1,19 +1,22 @@
 close all
 clear
 addpath('./Toolboxes')
+ 
 
-
-sets = 3001:5000;
+sets = 1:1;
 
 tic
 for s = sets
    clearvars -except s sets
 %%
-[vad, Pv] = randP(randi([90 140],1)); 
-vs = linspace(0,0.000005*randi([20,30],1),length(vad)+1); % for realism
+ref = randi([500 550],1);
+[vad, Pv] = randP(ref); 
+vs = linspace(0,0.0005*randi([20,30],1),length(vad)+1); % for realism
 vs = vs(2:end);
+vmax = randi([9 50])/1000;
+vs = vad*vmax;
 
-c0tot = 0.5;
+c0tot = randi([1 5],1)/10;
 t = linspace(0,randi([8000 10000],1),randi([1000 1200],1)); %to be twitched
 ci0 = c0tot * Pv;
 z = 0:-0.01*randi([8 10],1):-10*randi([2 5],1);
@@ -47,11 +50,11 @@ for k = 1:length(t)
     
    Cin = awgn(Ci,48) + Ci.*awgn(Ci,60)/5; % + Ci.*awgn(sin((z-v_2*t(k))*2*pi/g_2)*a_2,65) + Ci.*awgn(sin((z-v_3*t(k))*2*pi/g_3)*a_3,65);
    
-       plot(Ci,z)
-       xlim([0 1.3*c0tot]);
-       ylim([min(z) max(z)]);
-       pause(0.5)
-    
+%        plot(Ci,z)
+%        xlim([0 1.3*c0tot]);
+%        ylim([min(z) max(z)]);
+%        pause(0.5)
+%     
     Cn(:,k) = Cin';
     C(:,k) = Ci';
     
@@ -62,9 +65,9 @@ fileID_Cdata= ['./Marco/created_data/data_set_' num2str(s) '.mat'];
 dat = struct('C',C,'t',t,'z',z,'P',Pv,'v',vs);
 save(fileID_Cdata,'dat')
 
-fileID_Cdata= ['../ML_TRAINING_DATA/ML_MT/Noisy_b2/data_set_' num2str(s) '.mat'];
-dat = struct('C',Cn,'t',t,'z',z,'P',Pv,'v',vs);
-save(fileID_Cdata,'dat')
+% fileID_Cdata= ['../ML_TRAINING_DATA/ML_MT/Noisy_b2/data_set_' num2str(s) '.mat'];
+% dat = struct('C',Cn,'t',t,'z',z,'P',Pv,'v',vs);
+% save(fileID_Cdata,'dat')
 
 sprintf([num2str(s) ' out of ' num2str(sets(end))])
 

@@ -1,4 +1,5 @@
-function [x01, p] = randP(refinement)
+
+function [xpdf, p] = randP(refinement)
 %%
 % Input the refinement of the PVD and output a PVD made out of 3 to 4
 % peeks defined by the random term "r" in the loop and by an initial GUMMEL
@@ -8,40 +9,28 @@ function [x01, p] = randP(refinement)
 % The term used for the initial EV distribution are hand tuned to be
 % similar to known PSD taken from GILLARD () and from known sediment
 % analysis of CCFZ samples
-%
-close all
-x01 = linspace(0,1,refinement);
-xpdf = linspace(-35,15,refinement);
-muev = 1; bev = 2;
-p = evpdf(xpdf,muev,bev);
-p = p/sum(p);
-ran = zeros(1,50); vals = [-28 -30 -19 -2 -12 -16 -1 0 -3 -10 1 4 9 5 8];
-for i = 1:50
-ran(i) = vals(randi(numel(vals)));
+ 
+s1 = logspace(0,3,refinement*0.4-1)/10^3*0.005; 
+s2 = logspace(0,3,refinement*0.5)/10^3;
+[~, id] = min(abs(s2-s1(end)));
+xpdf = [0 s1 s2(id+1:end)];
+p = zeros(1,length(xpdf));
+ 
+for i = 0:randi([20 50],1)
+    mui = xpdf(randi([floor(refinement/2) length(xpdf)],1));   
+    sigi = randi([200 700])/100000;
+    pi = normpdf(xpdf,mui,sigi);
+    p = p + pi;
+
 end
 
-%figure('units','normalized','outerposition',[0 0 1 1])
-
-for r = 2:randi([5 10])
-    munorm(r) = ran(randi(numel(ran)));
-    if munorm(r) == munorm(r-1)
-        munorm(r) = ran(randi(numel(ran)));
-    end
-    if munorm(r) == munorm(r-1)
-        munorm(r) = ran(randi(numel(ran)));
-    end
-    if munorm(r) < -8
-        signorm = (3-1.5)*rand(1) + 1;
-        ptmp =  normpdf(xpdf,muev+munorm(r),signorm)/(randi([2 5]));
-    else
-        signorm = (1-0.5)*rand(1) + 1;
-        ptmp = normpdf(xpdf,muev+munorm(r),signorm);
-    end
-    p = p + ptmp;
-end
-p = movmean(p,ceil(refinement/30));
-%p = interp1(xpdf,p,x01)
+p(1) = 0;
 p = p/sum(p);
-
-% plot(xpdf,p)
+P = p.*[xpdf(1) diff(xpdf)];
+P = P/sum(P);
+% figure
+% bar(log(xpdf*0.01),p,'FaceAlpha',0.3,'EdgeColor','none');
+% hold on
+%  
+ 
 end

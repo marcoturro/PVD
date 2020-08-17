@@ -1,5 +1,5 @@
 
-function [vi,Pi,pi] = PVD_direct_solve(t,z,C_t_z,z0,z1,vmax)
+function [vi,Pi,pi] = PVD_direct_solve(t,z,C_t_z,z0,z1,vmax,kappa,pars)
 
 a = z0/z1 ;
 vmin = z0/t(end) ;
@@ -39,7 +39,7 @@ N = length(vi) ;
 
 A = full(gallery('tridiag',N,-a^(-2),1,0)) ;
 
-rhs = z0/C0*(ddtCi./vi.^3)' ;
+rhs = z0/C0*(1./kappa(vddtCi./vi.^3)' ;
 
 
 rhs(1) = Pvmin ;
@@ -50,6 +50,5 @@ dvi = [vmin diff(vi)]';
 vi(1) = 0;
 Pi = P.*dvi;
 Pi = Pi/sum(Pi);
-
 
 end

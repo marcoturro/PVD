@@ -1,16 +1,16 @@
 clear all;
 close all;
 
-dat = importdata('../exp_data/SiCF500_05.2.8.14.mat');
+dat = importdata('photo2.7.13.mat');
 addpath('../Toolboxes')
 t = dat.t;
 z = dat.z;
-DI = dat.Imean/dat.I0;
+C_t_z = dat.C;
 zact = -0.026;
 [~,izact] = min(abs(zact-z));
 z = z(izact:end)-zact;
 
-DI = DI(izact:end,:);
+C_t_z = C_t_z(izact:end,:);
 
 a = 1.05;
 
@@ -25,23 +25,23 @@ vmax = 1e-2;
 
 %%%
 
-% a = z0/z1;
-% vmin = z0/t(end);
-% vi(1) = vmin;
-% i=1;
-% while vi(i)<vmax
-%     vi(i+1) = vi(i)*a;
-%     i = i+1;
-% end
+a = z0/z1;
+vmin = z0/t(end);
+vi(1) = vmin;
+i=1;
+while vi(i)<vmax
+    vi(i+1) = vi(i)*a;
+    i = i+1;
+end
 
 
 %%%
 options = optimset('Display','iter','TolX',1e-9,'TolFun',1e-9);
 pars0 = [1e-7,1];
 kappa = @(v,pars)(pars(1)./v+pars(2));
-para = fminsearch(@(pars)get_err(t,z,DI,z0,z1,vmax,kappa,pars),pars0,options);
+para = fminsearch(@(pars)get_err(t,z,C_t_z,z0,z1,vmax,kappa,pars),pars0,options);
 
-[vi,Pi] = PVD_direct_solve(t,z,DI,z0,z1,vmax,kappa,para);
+[vi,Pi] = PVD_direct_solve(t,z,C_t_z,z0,z1,vmax,kappa,para);
 
 NZ = length(z);
 

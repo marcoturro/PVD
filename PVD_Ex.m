@@ -1,7 +1,7 @@
 clear
 % close all;
 
-in = ['./exp_data/SiCF1000_05.2.8.14.mat']
+in = ['./exp_data/SiCF1000_05.1.8.14.mat']
 % in = './Marco/created_data/data_set_1.mat'
 dat = importdata(in);
 dat.z = dat.z;
@@ -102,19 +102,19 @@ C = zeros(length(z),length(t));
 cnt = 0;
 col = lines(100);
 
-% for k = 1:length(tplt)
-%     
-%     [~,itp] = min(abs(tplt(k)-t));
-%     tp = t(itp);
-%     cnt = cnt+1;
-%     %t(k)/t(end)*100
-%     Ci = 0;
-%     for i = 1:length(Ptot)
-%         Ci = ci(c0*Ptot(i),vref(i),z,tp) + Ci;
-%     end
-%     
-%     plot(Ci,z,'color',col(cnt,:)); hold on;
-%     plot(C_t_z_or(:,itp),z,'--','color',col(cnt,:));
-% end
+for k = 1:length(tplt)
+    
+    [~,itp] = min(abs(tplt(k)-t));
+    tp = t(itp);
+    cnt = cnt+1;
+    %t(k)/t(end)*100
+    Ci = 0;
+    for i = 1:length(Ptot)
+        Ci = ci(c0*Ptot(i),vref(i),z,tp) + Ci;
+    end
+    
+    plot(Ci,z,'color',col(cnt,:)); hold on;
+    plot(C_t_z_or(:,itp),z,'--','color',col(cnt,:));
+end
 
 end

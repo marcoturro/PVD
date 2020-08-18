@@ -8,6 +8,7 @@ z = data.z;
 t = data.t;
 
 sizeZ = 100;
+sizeP = 350;
 
 %%%%%%%%%%%%% Process of C matrix %%%%%%%%%%%%%%%
 
@@ -48,12 +49,12 @@ try
     v = data.v;
     P = data.P;
     v = v/vmax;
-    P = interp1([v],[P],linspace(0,1,100));
-    v = linspace(0,1,100);
+    P = interp1([v],[P],linspace(0,1,sizeP));
+    v = linspace(0,1,sizeP);
     P = P/max(data.P);
 catch
-    v = zeros(1,100);
-    P = zeros(1,100);
+    v = zeros(1,sizeP);
+    P = zeros(1,sizeP);
 end
 
 end

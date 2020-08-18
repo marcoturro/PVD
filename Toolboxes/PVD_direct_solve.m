@@ -43,12 +43,12 @@ rhs = z0/C0*(ddtCi./vi.^3)' ;
 
 
 rhs(1) = Pvmin ;
-P = linsolve(A,rhs);
-Pi = P;
+pi = linsolve(A,rhs);
+pi(pi<0) = 0;
 dvi = [vmin diff(vi)]';
 
 vi(1) = 0;
-Pi = P.*dvi;
+Pi = pi.*dvi;
 Pi = Pi/sum(Pi);
 
 

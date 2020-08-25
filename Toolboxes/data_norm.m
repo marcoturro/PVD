@@ -49,9 +49,9 @@ try
     v = data.v;
     P = data.P;
     v = v/vmax;
-    P = interp1([v],[P],linspace(0,1,sizeP));
-    v = linspace(0,1,sizeP);
-    P = P/max(data.P);
+    P = interp1(v,P,logspace(0,3,sizeP)/10^3);
+    v = logspace(0,3,sizeP)/10^3;
+    P = P/sum(P);
 catch
     v = zeros(1,sizeP);
     P = zeros(1,sizeP);

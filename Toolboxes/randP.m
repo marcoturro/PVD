@@ -9,8 +9,9 @@ function [xpdf, p] = randP(refinement)
 % The term used for the initial EV distribution are hand tuned to be
 % similar to known PSD taken from GILLARD () and from known sediment
 % analysis of CCFZ samples
- 
-s1 = logspace(0,3,refinement*0.4-1)/10^3*0.005; 
+
+mode = randi([1 9])
+s1 = logspace(0,mode,refinement*0.4-1)/10^mode*0.005; 
 s2 = logspace(0,3,refinement*0.5)/10^3;
 [~, id] = min(abs(s2-s1(end)));
 xpdf = [0 s1 s2(id+1:end)];
@@ -28,9 +29,9 @@ p(1) = 0;
 p = p/sum(p);
 P = p.*[xpdf(1) diff(xpdf)];
 P = P/sum(P);
-% figure
-% bar(log(xpdf*0.01),p,'FaceAlpha',0.3,'EdgeColor','none');
-% hold on
-%  
+figure
+bar(log(xpdf*0.1*rand),p,'FaceAlpha',0.3,'EdgeColor','none');
+hold on
+ 
  
 end

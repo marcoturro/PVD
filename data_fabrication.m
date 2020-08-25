@@ -10,9 +10,7 @@ for s = sets
    clearvars -except s sets
 %%
 ref = randi([500 550],1);
-[vad, Pv] = randP(ref); 
-vs = linspace(0,0.0005*randi([20,30],1),length(vad)+1); % for realism
-vs = vs(2:end);
+[vad, Pv] = randP(ref);
 vmax = randi([9 50])/1000;
 vs = vad*vmax;
 
@@ -64,6 +62,7 @@ end
 fileID_Cdata= ['./Marco/created_data/data_set_' num2str(s) '.mat'];
 dat = struct('C',C,'t',t,'z',z,'P',Pv,'v',vs);
 save(fileID_Cdata,'dat')
+
 
 % fileID_Cdata= ['../ML_TRAINING_DATA/ML_MT/Noisy_b2/data_set_' num2str(s) '.mat'];
 % dat = struct('C',Cn,'t',t,'z',z,'P',Pv,'v',vs);

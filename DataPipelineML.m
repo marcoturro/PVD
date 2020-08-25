@@ -8,13 +8,14 @@ Isize = 100
 m = Isize + kernel + 2*Pad
 n = Isize + 2*Pad
 type = 'linear'
-Data_Pool = './Marco/created_data/'
-Save = './Marco';
-
-for DatN = 1:10
+Data_Pool = './exp_data/'
+Save = './SiCML/';
+exp = {'SiCF500_05.1.8.14','SiCF500_05.2.8.14','SiCF800_05.1.8.14','SiCF800_05.2.8.14','SiCF1000_05.1.8.14','SiCF1000_05.2.8.14','SiC33_05.1.8.16','SiC33_05.2.8.16','SiC50_05.1.8.17','SiC50_05.2.8.17'}
+for DatN = 1:length(exp)
 DatN
 
-load([Data_Pool '/data_set_' num2str(DatN) '.mat'])
+%load([Data_Pool '/data_set_' num2str(DatN) '.mat'])
+load([Data_Pool exp{DatN} '.mat'])
 
 try
     vmax = dat.v(end);

@@ -1,17 +1,19 @@
-clear
+
+clearvars -except Csig
 % close all;
 
-in = ['./exp_data/CCFZ_05.7.7.20.mat']
-% in = './Marco/created_data/data_set_1.mat'
+in = ['./exp_data/SiC33_05.1.8.16.mat']
+% in = './Marco/created_data/data_set_2.mat'
 dat = importdata(in);
 dat.z = dat.z;
 addpath('./Toolboxes')
 plt = 1; 
 mPvd = 1;
 vmax = 0.5e-1;
-zz0 = 0.01:0.001:0.09;
+zz0 =  0.09 %0.01:0.001:0.09;
 
 t = dat.t;
+
 [~, id_z0] = min(abs(dat.z));
 z = dat.z(id_z0:end);
 
@@ -19,7 +21,7 @@ if length(dat.C(1,:)) ~= length(t)
     Cz = dat.C';
     C_t_z = Cz(id_z0:end,:);
 else
-    C_t_z = dat.C(id_z0:end,:)*1.25;
+    C_t_z = dat.C(id_z0:end,:);
 end
 
 C_t_z = C_t_z(1:end,:) - min(min(C_t_z));
@@ -37,7 +39,6 @@ ci = @(ci0,vs,z,t)(ci0*(1-heaviside(z+vs*t)));
 
 clear Ps vs
 Prof_fig = figure;
-
 for lopt = 1:length(zz0)
 z0 = zz0(lopt);
 z1 = z0*0.99;
@@ -88,7 +89,7 @@ Ptot = Ptot.*[vref(1) diff(vref)];
 Ptot = Ptot/sum(Ptot);
 
 PVD_fig = figure;
-bar(log(vref),Ptot,'Facecolor',[0 0.3 1],'FaceAlpha',0.3,'DisplayName',['z0 = ' num2str(z0)]);
+bar(log(vref),Ptot,'FaceAlpha',0.3,'DisplayName',['z0 = ' num2str(z0)]);
 ylabel('Pi');
 xlabel('log(v) [m/s]');
 set(gca,'FontSize',14);
@@ -111,7 +112,7 @@ for k = 1:length(tplt)
     for i = 1:length(Ptot)
         Ci = ci(c0*Ptot(i),vref(i),z,tp) + Ci;
     end
-    
+    Cret(k,:) = Ci;
     plot(Ci,z,'color',col(cnt,:)); hold on;
     plot(C_t_z_or(:,itp),z,'--','color',col(cnt,:));
 end
